@@ -3,6 +3,7 @@ use std::env;
 use serenity::async_trait;
 use serenity::client::{Client, Context, EventHandler};
 
+use lazy_static::lazy_static;
 use serenity::framework::standard::{
     macros::{command, group},
     CommandResult, StandardFramework,
@@ -12,33 +13,35 @@ use serenity::model::prelude::Ready;
 use serenity::prelude::Mentionable;
 
 #[group]
-#[commands(ping, ip)]
+#[commands(ping, ip, joke)]
 struct General;
 
+lazy_static! {
+    static ref REQESUT: reqwest::Client = reqwest::Client::new();
+}
 struct Handler;
 
 #[async_trait]
 impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
-        if !msg.author.bot {
-            let user = msg.author;
-            match msg.content.to_lowercase().contains("thank you")
-                || msg.content.to_lowercase().contains("thanks")
-            {
-                true => {
-                    let _ = msg
-                        .channel_id
-                        .say(&ctx.http, format!("No, thank you {}!", user.mention()))
-                        .await;
-                }
-                false => (),
-            }
+        if !msg.author.bot && is_thanks(&msg.content) {
+            let _ = msg
+                .channel_id
+                .say(
+                    &ctx.http,
+                    format!("No, thank you {}!", msg.author.mention()),
+                )
+                .await;
         }
     }
 
     async fn ready(&self, _: Context, ready: Ready) {
         println!("{} is connected!", ready.user.name);
     }
+}
+
+fn is_thanks(msg: &str) -> bool {
+    msg.to_lowercase().contains("thank") || msg.to_lowercase().contains("thank you")
 }
 
 #[tokio::main]
@@ -65,15 +68,32 @@ async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
     Ok(())
 }
 
-// // send my ip address
 #[command]
 async fn ip(ctx: &Context, msg: &Message) -> CommandResult {
-    let ip = reqwest::get("https://api.ipify.org")
+    let ip = REQESUT
+        .get("https://api.ipify.org")
+        .send()
         .await
         .unwrap()
         .text()
         .await
         .unwrap();
+
     msg.reply(ctx, ip).await?;
+    Ok(())
+}
+
+#[command]
+async fn joke(ctx: &Context, msg: &Message) -> CommandResult {
+    let joke = REQESUT
+        .get("https://icanhazdadjoke.com/")
+        .header("Accept", "text/plain")
+        .send()
+        .await
+        .unwrap()
+        .text()
+        .await
+        .unwrap();
+    msg.reply(ctx, joke).await?;
     Ok(())
 }

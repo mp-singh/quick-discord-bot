@@ -24,8 +24,6 @@ lazy_static! {
 #[commands(ping, ip, joke, yomama)]
 struct General;
 
-struct Handler;
-
 #[help]
 async fn my_help(
     context: &Context,
@@ -38,6 +36,8 @@ async fn my_help(
     let _ = help_commands::with_embeds(context, msg, args, help_options, groups, owners).await;
     Ok(())
 }
+
+struct Handler;
 
 #[async_trait]
 impl EventHandler for Handler {
@@ -106,7 +106,7 @@ async fn ip(ctx: &Context, msg: &Message) -> CommandResult {
 async fn joke(ctx: &Context, msg: &Message) -> CommandResult {
     let joke = REQESUT
         .get("https://icanhazdadjoke.com/")
-        .header("Accept", "text/plain")
+        .header("Accept", "application/json")
         .send()
         .await
         .unwrap()

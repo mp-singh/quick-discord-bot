@@ -27,3 +27,13 @@ pub struct Excuse {
     pub excuse: String,
     category: String,
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct ChuckNorris {
+    categories: Vec<String>,
+    id: String,
+    icon_url: String,
+    updated_at: String,
+    url: String,
+    pub value: String,
+}

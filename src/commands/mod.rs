@@ -15,6 +15,8 @@ pub async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
 }
 
 #[command]
+#[description("Get the IP address of the bot")]
+#[help_available(false)]
 pub async fn ip(ctx: &Context, msg: &Message) -> CommandResult {
     let ip = REQESUT
         .get("https://api.ipify.org")
@@ -30,6 +32,7 @@ pub async fn ip(ctx: &Context, msg: &Message) -> CommandResult {
 }
 
 #[command]
+#[description("Get a random joke")]
 pub async fn joke(ctx: &Context, msg: &Message) -> CommandResult {
     let joke = REQESUT
         .get("https://icanhazdadjoke.com/")
@@ -45,6 +48,7 @@ pub async fn joke(ctx: &Context, msg: &Message) -> CommandResult {
 }
 
 #[command]
+#[description("Get a random yomama joke")]
 pub async fn yomama(ctx: &Context, msg: &Message) -> CommandResult {
     let yomama = REQESUT
         .get("https://api.yomomma.info/")
@@ -60,6 +64,7 @@ pub async fn yomama(ctx: &Context, msg: &Message) -> CommandResult {
 }
 
 #[command]
+#[description("Get a random trivia question")]
 pub async fn trivia(ctx: &Context, msg: &Message) -> CommandResult {
     let trivia = REQESUT
         .get("https://opentdb.com/api.php?amount=1")
@@ -90,6 +95,7 @@ pub async fn trivia(ctx: &Context, msg: &Message) -> CommandResult {
 }
 
 #[command]
+#[description("Generate a random excuse for not joining the fun!")]
 pub async fn excuse(ctx: &Context, msg: &Message) -> CommandResult {
     let excuse = REQESUT
         .get("https://excuser.herokuapp.com/v1/excuse")
@@ -104,5 +110,22 @@ pub async fn excuse(ctx: &Context, msg: &Message) -> CommandResult {
         .unwrap();
 
     msg.reply(ctx, excuse.excuse).await?;
+    Ok(())
+}
+
+#[command]
+#[description("Get your daily Chuck Norris fact!")]
+#[aliases("chuck", "chucknorris")]
+pub async fn chuck_norris(ctx: &Context, msg: &Message) -> CommandResult {
+    let chuck_norris = REQESUT
+        .get("https://api.chucknorris.io/jokes/random")
+        .send()
+        .await
+        .unwrap()
+        .json::<ChuckNorris>()
+        .await
+        .unwrap();
+
+    msg.reply(ctx, chuck_norris.value).await?;
     Ok(())
 }

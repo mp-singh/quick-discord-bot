@@ -5,13 +5,9 @@ use serenity::async_trait;
 use serenity::client::{Client, Context, EventHandler};
 
 use lazy_static::lazy_static;
-use serde::{Deserialize, Serialize};
 use serenity::framework::standard::macros::help;
 use serenity::framework::standard::{help_commands, Args, CommandGroup, HelpOptions};
-use serenity::framework::standard::{
-    macros::{command, group},
-    CommandResult, StandardFramework,
-};
+use serenity::framework::standard::{macros::group, CommandResult, StandardFramework};
 use serenity::model::channel::Message;
 use serenity::model::id::UserId;
 use serenity::model::prelude::Ready;
@@ -20,8 +16,14 @@ use serenity::prelude::Mentionable;
 lazy_static! {
     static ref REQESUT: reqwest::Client = reqwest::Client::new();
 }
+
+mod commands;
+mod models;
+
+use commands::*;
+
 #[group]
-#[commands(ping, ip, joke, yomama)]
+#[commands(ping, ip, joke, yomama, trivia, excuse)]
 struct General;
 
 #[help]
@@ -59,7 +61,7 @@ impl EventHandler for Handler {
 }
 
 fn is_thanks(msg: &str) -> bool {
-    msg.to_lowercase().contains("thank") || msg.to_lowercase().contains("thank you")
+    msg.to_lowercase().contains("thank") || msg.to_lowercase().contains("thx")
 }
 
 #[tokio::main]
@@ -79,60 +81,4 @@ async fn main() {
     if let Err(why) = client.start().await {
         println!("An error occurred while running the client: {:?}", why);
     }
-}
-
-#[command]
-async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
-    msg.reply(ctx, "Pong").await?;
-    Ok(())
-}
-
-#[command]
-async fn ip(ctx: &Context, msg: &Message) -> CommandResult {
-    let ip = REQESUT
-        .get("https://api.ipify.org")
-        .send()
-        .await
-        .unwrap()
-        .text()
-        .await
-        .unwrap();
-
-    msg.reply(ctx, ip).await?;
-    Ok(())
-}
-
-#[command]
-async fn joke(ctx: &Context, msg: &Message) -> CommandResult {
-    let joke = REQESUT
-        .get("https://icanhazdadjoke.com/")
-        .header("Accept", "application/json")
-        .send()
-        .await
-        .unwrap()
-        .text()
-        .await
-        .unwrap();
-    msg.reply(ctx, joke).await?;
-    Ok(())
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Joke {
-    pub joke: String,
-}
-
-#[command]
-async fn yomama(ctx: &Context, msg: &Message) -> CommandResult {
-    let yomama = REQESUT
-        .get("https://api.yomomma.info/")
-        .header("Accept", "text/plain")
-        .send()
-        .await
-        .unwrap()
-        .json::<Joke>()
-        .await
-        .unwrap();
-    msg.reply(ctx, yomama.joke).await?;
-    Ok(())
 }

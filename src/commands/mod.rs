@@ -1,4 +1,5 @@
 use serenity::client::Context;
+use serenity::framework::standard::Args;
 use serenity::framework::standard::{macros::command, CommandResult};
 use serenity::model::channel::Message;
 use serenity::utils::Content;
@@ -127,5 +128,57 @@ pub async fn chuck_norris(ctx: &Context, msg: &Message) -> CommandResult {
         .unwrap();
 
     msg.reply(ctx, chuck_norris.value).await?;
+    Ok(())
+}
+
+// #[command]
+// #[description("Get your daily Chuck Norris fact!")]
+// #[aliases("chuck", "chucknorris")]
+// pub async fn face(ctx: &Context, msg: &Message) -> CommandResult {
+//     let face = REQESUT
+//         .get("https://thispersondoesnotexist.com/image")
+//         .header("Accept", "image/jpeg")
+//         .send()
+//         .await
+//         .unwrap()
+//         .text()
+//         .await
+//         .unwrap();
+
+//     println!("{}", face);
+//     let chuck_norris = REQESUT
+//         .get("https://api.chucknorris.io/jokes/random")
+//         .send()
+//         .await
+//         .unwrap()
+//         .json::<ChuckNorris>()
+//         .await
+//         .unwrap();
+
+//     msg.reply(ctx, chuck_norris.value).await?;
+//     Ok(())
+// }
+
+#[command]
+#[description("Counts the number of occurance of a phrase in a messages")]
+pub async fn count(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
+    let phrase = args.message().to_string();
+    let count = msg
+        .channel_id
+        .messages(&ctx.http, |m| m.limit(100))
+        .await?
+        .into_iter()
+        .filter(|m| m.content.to_lowercase().contains(&phrase.to_lowercase()))
+        .count();
+
+    let response = match count {
+        0 => format!("No messages found containing the phrase: \"{}\".", phrase),
+        1 => format!("1 message found containing the phrase: \"{}\".", phrase),
+        _ => format!(
+            "{} messages found containing phrase: \"{}\".",
+            count, phrase
+        ),
+    };
+    msg.reply(ctx, response).await?;
     Ok(())
 }

@@ -22,11 +22,9 @@ pub async fn ip(ctx: &Context, msg: &Message) -> CommandResult {
     let ip = REQESUT
         .get("https://api.ipify.org")
         .send()
-        .await
-        .unwrap()
+        .await?
         .text()
-        .await
-        .unwrap();
+        .await?;
 
     msg.reply(ctx, ip).await?;
     Ok(())
@@ -39,11 +37,9 @@ pub async fn joke(ctx: &Context, msg: &Message) -> CommandResult {
         .get("https://icanhazdadjoke.com/")
         .header("Accept", "text/plain")
         .send()
-        .await
-        .unwrap()
+        .await?
         .text()
-        .await
-        .unwrap();
+        .await?;
     msg.reply(ctx, joke).await?;
     Ok(())
 }
@@ -55,11 +51,9 @@ pub async fn yomama(ctx: &Context, msg: &Message) -> CommandResult {
         .get("https://api.yomomma.info/")
         .header("Accept", "text/plain")
         .send()
-        .await
-        .unwrap()
+        .await?
         .json::<Joke>()
-        .await
-        .unwrap();
+        .await?;
     msg.reply(ctx, yomama.joke).await?;
     Ok(())
 }
@@ -71,11 +65,9 @@ pub async fn trivia(ctx: &Context, msg: &Message) -> CommandResult {
         .get("https://opentdb.com/api.php?amount=1")
         .header("Accept", "application/json; charset=utf-8")
         .send()
-        .await
-        .unwrap()
+        .await?
         .json::<TriviaQuestions>()
-        .await
-        .unwrap()
+        .await?
         .results
         .into_iter()
         .next()
@@ -101,11 +93,9 @@ pub async fn excuse(ctx: &Context, msg: &Message) -> CommandResult {
     let excuse = REQESUT
         .get("https://excuser.herokuapp.com/v1/excuse")
         .send()
-        .await
-        .unwrap()
+        .await?
         .json::<Vec<Excuse>>()
-        .await
-        .unwrap()
+        .await?
         .into_iter()
         .next()
         .unwrap();
@@ -121,11 +111,9 @@ pub async fn chuck_norris(ctx: &Context, msg: &Message) -> CommandResult {
     let chuck_norris = REQESUT
         .get("https://api.chucknorris.io/jokes/random")
         .send()
-        .await
-        .unwrap()
+        .await?
         .json::<ChuckNorris>()
-        .await
-        .unwrap();
+        .await?;
 
     msg.reply(ctx, chuck_norris.value).await?;
     Ok(())
@@ -139,21 +127,17 @@ pub async fn chuck_norris(ctx: &Context, msg: &Message) -> CommandResult {
 //         .get("https://thispersondoesnotexist.com/image")
 //         .header("Accept", "image/jpeg")
 //         .send()
-//         .await
-//         .unwrap()
+//         .await?
 //         .text()
-//         .await
-//         .unwrap();
+//         .await?;
 
 //     println!("{}", face);
 //     let chuck_norris = REQESUT
 //         .get("https://api.chucknorris.io/jokes/random")
 //         .send()
-//         .await
-//         .unwrap()
+//         .await?
 //         .json::<ChuckNorris>()
-//         .await
-//         .unwrap();
+//         .await?;
 
 //     msg.reply(ctx, chuck_norris.value).await?;
 //     Ok(())
@@ -162,12 +146,15 @@ pub async fn chuck_norris(ctx: &Context, msg: &Message) -> CommandResult {
 #[command]
 #[description("Counts the number of occurance of a phrase in a messages")]
 pub async fn count(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
+    //filter out the message content that starts with "~"
     let phrase = args.message().to_string();
     let count = msg
         .channel_id
         .messages(&ctx.http, |m| m.limit(100))
         .await?
         .into_iter()
+        .filter(|m| !m.author.bot)
+        .filter(|m| !m.content.chars().next().unwrap().eq(&'~'))
         .filter(|m| m.content.to_lowercase().contains(&phrase.to_lowercase()))
         .count();
 

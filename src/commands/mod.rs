@@ -1,3 +1,5 @@
+use rand::prelude::SliceRandom;
+use rand::Rng;
 use serenity::client::Context;
 use serenity::framework::standard::Args;
 use serenity::framework::standard::{macros::command, CommandResult};
@@ -31,6 +33,7 @@ pub async fn ip(ctx: &Context, msg: &Message) -> CommandResult {
 }
 
 #[command]
+#[usage(": ~joke")]
 #[description("Get a random joke")]
 pub async fn joke(ctx: &Context, msg: &Message) -> CommandResult {
     let joke = REQESUT
@@ -45,6 +48,7 @@ pub async fn joke(ctx: &Context, msg: &Message) -> CommandResult {
 }
 
 #[command]
+#[usage(": ~yomama")]
 #[description("Get a random yomama joke")]
 pub async fn yomama(ctx: &Context, msg: &Message) -> CommandResult {
     let yomama = REQESUT
@@ -59,6 +63,7 @@ pub async fn yomama(ctx: &Context, msg: &Message) -> CommandResult {
 }
 
 #[command]
+#[usage(": ~trivia")]
 #[description("Get a random trivia question")]
 pub async fn trivia(ctx: &Context, msg: &Message) -> CommandResult {
     let trivia = REQESUT
@@ -88,6 +93,7 @@ pub async fn trivia(ctx: &Context, msg: &Message) -> CommandResult {
 }
 
 #[command]
+#[usage(": ~excuse")]
 #[description("Generate a random excuse for not joining the fun!")]
 pub async fn excuse(ctx: &Context, msg: &Message) -> CommandResult {
     let excuse = REQESUT
@@ -107,6 +113,7 @@ pub async fn excuse(ctx: &Context, msg: &Message) -> CommandResult {
 }
 
 #[command]
+#[usage(": ~chuck")]
 #[description("Get your daily Chuck Norris fact!")]
 #[aliases("chuck", "chucknorris")]
 pub async fn chuck_norris(ctx: &Context, msg: &Message) -> CommandResult {
@@ -121,31 +128,23 @@ pub async fn chuck_norris(ctx: &Context, msg: &Message) -> CommandResult {
     Ok(())
 }
 
-// #[command]
-// #[description("Get your daily Chuck Norris fact!")]
-// #[aliases("chuck", "chucknorris")]
-// pub async fn face(ctx: &Context, msg: &Message) -> CommandResult {
-//     let face = REQESUT
-//         .get("https://thispersondoesnotexist.com/image")
-//         .header("Accept", "image/jpeg")
-//         .send()
-//         .await?
-//         .text()
-//         .await?;
-
-//     println!("{}", face);
-//     let chuck_norris = REQESUT
-//         .get("https://api.chucknorris.io/jokes/random")
-//         .send()
-//         .await?
-//         .json::<ChuckNorris>()
-//         .await?;
-
-//     msg.reply(ctx, chuck_norris.value).await?;
-//     Ok(())
-// }
+#[command]
+#[description("Generates a face that doesn't exist")]
+pub async fn face(ctx: &Context, msg: &Message) -> CommandResult {
+    // attach the image to the message
+    msg.channel_id
+        .send_message(ctx, |m| {
+            m.embed(|e| {
+                e.image("https://thispersondoesnotexist.com/image");
+                e
+            })
+        })
+        .await?;
+    Ok(())
+}
 
 #[command]
+#[usage(": ~count test")]
 #[description("Counts the number of occurance of a phrase in a messages")]
 pub async fn count(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     //filter out the message content that starts with "~"
@@ -155,7 +154,7 @@ pub async fn count(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
         .messages(&ctx.http, |m| m.limit(100))
         .await?
         .into_iter()
-        .filter(|m| !m.author.bot && !m.content.starts_with("~"))
+        .filter(|m| !m.author.bot && !m.content.starts_with('~'))
         .filter(|m| m.content.to_lowercase().contains(&phrase.to_lowercase()))
         .count();
 
@@ -167,6 +166,67 @@ pub async fn count(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
             count, phrase
         ),
     };
+    msg.reply(ctx, response).await?;
+    Ok(())
+}
+
+#[command]
+#[usage(": ~flip")]
+#[description("Flip a coin")]
+pub async fn flip(ctx: &Context, msg: &Message) -> CommandResult {
+    // flip a coin
+    let response = match rand::thread_rng().gen_range(0..2) {
+        0 => "Heads",
+        1 => "Tails",
+        _ => "Shit's broken yo!",
+    };
+    msg.reply(ctx, response).await?;
+    Ok(())
+}
+
+#[command]
+#[usage(": ~haphazardly item1,item2,item3...itemN")]
+#[description("Choose a random item from a provided list")]
+pub async fn haphazardly(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
+    if args.is_empty() {
+        msg.reply(ctx, "You need to provide a list of items to choose from!")
+            .await?;
+        return Ok(());
+    }
+
+    let list = args.message().to_string();
+    let list_items: Vec<&str> = list
+        .split(',')
+        .into_iter()
+        .filter(|s| !s.is_empty())
+        .collect();
+    let random_item = list_items.choose(&mut rand::thread_rng());
+    let response = match random_item {
+        Some(item) => item.trim().to_string(),
+        None => "Shit's broken yo!".to_string(),
+    };
+    msg.reply(ctx, response).await?;
+    Ok(())
+}
+
+#[command]
+#[usage(": ~roll | ~roll <number>")]
+#[max_args(1)]
+#[description("Roll a dice")]
+pub async fn roll(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
+    let dice_side: u64 = match &args.is_empty() {
+        true => 6,
+        false => match args.single::<u64>() {
+            Ok(side) => side,
+            Err(_) => {
+                msg.reply(ctx, "Don't be a smart ass and pick a valid dice side.")
+                    .await?;
+                return Ok(());
+            }
+        },
+    };
+
+    let response = rand::thread_rng().gen_range(1..dice_side + 1);
     msg.reply(ctx, response).await?;
     Ok(())
 }

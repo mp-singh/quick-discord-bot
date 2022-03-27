@@ -23,7 +23,19 @@ mod models;
 use commands::*;
 
 #[group]
-#[commands(ping, ip, joke, yomama, trivia, excuse, chuck_norris, count)]
+#[commands(
+    ping,
+    ip,
+    joke,
+    yomama,
+    trivia,
+    excuse,
+    chuck_norris,
+    count,
+    flip,
+    roll,
+    haphazardly
+)]
 struct General;
 
 #[help]

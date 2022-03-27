@@ -97,10 +97,12 @@ pub async fn excuse(ctx: &Context, msg: &Message) -> CommandResult {
         .json::<Vec<Excuse>>()
         .await?
         .into_iter()
-        .next()
-        .unwrap();
+        .next();
 
-    msg.reply(ctx, excuse.excuse).await?;
+    match excuse {
+        Some(excuse) => msg.reply(ctx, excuse.excuse).await?,
+        None => msg.reply(ctx, "Shit's broken yo!").await?,
+    };
     Ok(())
 }
 
@@ -153,8 +155,7 @@ pub async fn count(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
         .messages(&ctx.http, |m| m.limit(100))
         .await?
         .into_iter()
-        .filter(|m| !m.author.bot)
-        .filter(|m| !m.content.chars().next().unwrap().eq(&'~'))
+        .filter(|m| !m.author.bot && !m.content.starts_with("~"))
         .filter(|m| m.content.to_lowercase().contains(&phrase.to_lowercase()))
         .count();
 

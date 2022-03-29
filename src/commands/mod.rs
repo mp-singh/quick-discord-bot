@@ -7,7 +7,7 @@ use serenity::model::channel::Message;
 use serenity::utils::Content;
 use serenity::utils::ContentModifier::Spoiler;
 
-use crate::REQESUT;
+use crate::{REGEX_DICE, REQESUT};
 
 use crate::models::*;
 
@@ -210,24 +210,53 @@ pub async fn haphazardly(ctx: &Context, msg: &Message, args: Args) -> CommandRes
 }
 
 #[command]
-#[usage(": ~roll | ~roll <number>")]
+#[usage(": ~roll | ~roll <number> | ~roll <number>d<number>")]
 #[max_args(1)]
 #[description("Roll a dice")]
-pub async fn roll(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
-    let dice_side: u64 = match &args.is_empty() {
-        true => 6,
-        false => match args.single::<u64>() {
-            Ok(side) => side,
-            Err(_) => {
-                msg.reply(ctx, "Don't be a smart ass and pick a valid dice side.")
-                    .await?;
+pub async fn roll(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
+    if args.is_empty() {
+        let response = rand::thread_rng().gen_range(1..7);
+        msg.reply(ctx, response.to_string()).await?;
+        return Ok(());
+    }
+
+    if !args.is_empty() {
+        match REGEX_DICE.captures(args.message()) {
+            Some(captures) => {
+                let dice_count = captures.get(1).unwrap().as_str().parse::<u8>().unwrap();
+                let dice_sides = captures.get(2).unwrap().as_str().parse::<u64>().unwrap();
+                let mut dice_rolls: Vec<u64> = Vec::new();
+                for _ in 0..dice_count {
+                    dice_rolls.push(rand::thread_rng().gen_range(1..dice_sides + 1));
+                }
+                let response = format!(
+                    "Rolled {}d{}!\n[{}]\nTotal: {}",
+                    dice_count,
+                    dice_sides,
+                    dice_rolls
+                        .iter()
+                        .map(|r| r.to_string())
+                        .collect::<Vec<String>>()
+                        .join(", "),
+                    dice_rolls.iter().sum::<u64>()
+                );
+                msg.reply(ctx, response).await?;
                 return Ok(());
             }
-        },
+            None => match args.message().parse::<u64>() {
+                Ok(number) => {
+                    let response = rand::thread_rng().gen_range(1..number + 1).to_string();
+                    msg.reply(ctx, response).await?;
+                    return Ok(());
+                }
+                Err(_) => {
+                    msg.reply(ctx, "Don't be a smart ass and pick a valid input!")
+                        .await?;
+                    return Ok(());
+                }
+            },
+        }
     };
-
-    let response = rand::thread_rng().gen_range(1..dice_side + 1);
-    msg.reply(ctx, response).await?;
     Ok(())
 }
 

@@ -5,6 +5,7 @@ use serenity::async_trait;
 use serenity::client::{Client, Context, EventHandler};
 
 use lazy_static::lazy_static;
+use regex::Regex;
 use serenity::framework::standard::macros::help;
 use serenity::framework::standard::{help_commands, Args, CommandGroup, HelpOptions};
 use serenity::framework::standard::{macros::group, CommandResult, StandardFramework};
@@ -15,6 +16,7 @@ use serenity::prelude::Mentionable;
 
 lazy_static! {
     static ref REQESUT: reqwest::Client = reqwest::Client::new();
+    static ref REGEX: Regex = Regex::new(r"^((?:[1-9][0-9]?|100))(D|d)(\d*)").unwrap();
 }
 
 mod commands;

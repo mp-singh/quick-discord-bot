@@ -7,7 +7,7 @@ use serenity::model::channel::Message;
 use serenity::utils::Content;
 use serenity::utils::ContentModifier::Spoiler;
 
-use crate::REQESUT;
+use crate::{REQESUT, REGEX};
 
 use crate::models::*;
 
@@ -214,16 +214,26 @@ pub async fn haphazardly(ctx: &Context, msg: &Message, args: Args) -> CommandRes
 #[max_args(1)]
 #[description("Roll a dice")]
 pub async fn roll(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
+    
     let dice_side: u64 = match &args.is_empty() {
         true => 6,
-        false => match args.single::<u64>() {
-            Ok(side) => side,
-            Err(_) => {
-                msg.reply(ctx, "Don't be a smart ass and pick a valid dice side.")
-                    .await?;
-                return Ok(());
-            }
-        },
+        false => {
+                match REGEX_DICE_SIDE.captures(&args.message()) {
+                    Some(captures) => {
+                        let num_of_rolls = captures.get(1).unwrap().as_str().parse::<u64>().unwrap();
+                        let dice_side = captures.get(2).unwrap().as_str().parse::<u64>().unwrap();
+                        num_of_rolls * dice_side
+                    }
+                }
+                match args.single::<u64>() {
+                Ok(side) => side,
+                Err(_) => {
+                    msg.reply(ctx, "Don't be a smart ass and pick a valid dice side.")
+                        .await?;
+                    return Ok(());
+                }
+            },
+    }
     };
 
     let response = rand::thread_rng().gen_range(1..dice_side + 1);

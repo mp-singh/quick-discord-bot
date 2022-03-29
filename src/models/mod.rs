@@ -40,5 +40,5 @@ pub struct ChuckNorris {
 
 #[derive(Serialize, Deserialize)]
 pub struct Trump {
-    message: String,
+    pub message: String,
 }

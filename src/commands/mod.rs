@@ -210,7 +210,7 @@ pub async fn haphazardly(ctx: &Context, msg: &Message, args: Args) -> CommandRes
 }
 
 #[command]
-#[usage(": ~roll | ~roll <number>")]
+#[usage(": ~roll | ~roll <number> | ~roll <number>d<number>")]
 #[max_args(1)]
 #[description("Roll a dice")]
 pub async fn roll(ctx: &Context, msg: &Message, args: Args) -> CommandResult {

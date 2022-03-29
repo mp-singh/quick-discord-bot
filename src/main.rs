@@ -16,7 +16,7 @@ use serenity::prelude::Mentionable;
 
 lazy_static! {
     static ref REQESUT: reqwest::Client = reqwest::Client::new();
-    static ref REGEX: Regex = Regex::new(r"^((?:[1-9][0-9]?|100))(D|d)(\d*)").unwrap();
+    static ref REGEX_DICE: Regex = Regex::new(r"^([1-9][0-9]?|100)[Dd]([1-9]\d*)$").unwrap();
 }
 
 mod commands;

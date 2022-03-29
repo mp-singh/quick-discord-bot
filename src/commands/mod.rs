@@ -225,9 +225,9 @@ pub async fn roll(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
             Some(captures) => {
                 let dice_count = captures.get(1).unwrap().as_str().parse::<u8>().unwrap();
                 let dice_sides = captures.get(2).unwrap().as_str().parse::<u64>().unwrap();
-                let mut dice_rolls: Vec<u64> = Vec::new();
+                let mut dice_rolls: Vec<u128> = Vec::new();
                 for _ in 0..dice_count {
-                    dice_rolls.push(rand::thread_rng().gen_range(1..dice_sides + 1));
+                    dice_rolls.push(rand::thread_rng().gen_range(1..dice_sides + 1).into());
                 }
                 let response = format!(
                     "Rolled {}d{}!\n[{}]\nTotal: {}",
@@ -238,9 +238,13 @@ pub async fn roll(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
                         .map(|r| r.to_string())
                         .collect::<Vec<String>>()
                         .join(", "),
-                    dice_rolls.iter().sum::<u64>()
+                    dice_rolls.iter().sum::<u128>()
                 );
-                msg.reply(ctx, response).await?;
+                if response.len() > 2000 {
+                    msg.reply(ctx, "Too many dice to display!").await?;
+                } else {
+                    msg.reply(ctx, response).await?;
+                }
                 return Ok(());
             }
             None => match args.message().parse::<u64>() {

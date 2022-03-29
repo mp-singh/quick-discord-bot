@@ -31,6 +31,7 @@ use commands::*;
     trivia,
     excuse,
     chuck_norris,
+    trump,
     count,
     flip,
     roll,

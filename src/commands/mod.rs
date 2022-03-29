@@ -230,3 +230,18 @@ pub async fn roll(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult
     msg.reply(ctx, response).await?;
     Ok(())
 }
+
+#[command]
+#[usage(": ~trump")]
+#[description("Generate a random, completely factual, Donald Trump quote.")]
+pub async fn trump(ctx: &Context, msg: &Message) -> CommandResult {
+    let trump = REQESUT
+        .get("https://api.whatdoestrumpthink.com/api/v1/quotes/random")
+        .send()
+        .await?
+        .json::<Trump>()
+        .await?;
+
+    msg.reply(ctx, trump.message).await?;
+    Ok(())
+}

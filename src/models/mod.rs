@@ -37,3 +37,8 @@ pub struct ChuckNorris {
     url: String,
     pub value: String,
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct Trump {
+    pub message: String,
+}

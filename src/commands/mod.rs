@@ -33,7 +33,7 @@ pub async fn ip(ctx: &Context, msg: &Message) -> CommandResult {
 }
 
 #[command]
-#[usage(": ~joke")]
+#[example(": ~joke")]
 #[description("Get a random joke")]
 pub async fn joke(ctx: &Context, msg: &Message) -> CommandResult {
     let joke = REQESUT
@@ -48,7 +48,7 @@ pub async fn joke(ctx: &Context, msg: &Message) -> CommandResult {
 }
 
 #[command]
-#[usage(": ~yomama")]
+#[example(": ~yomama")]
 #[description("Get a random yomama joke")]
 pub async fn yomama(ctx: &Context, msg: &Message) -> CommandResult {
     let yomama = REQESUT
@@ -94,26 +94,23 @@ pub async fn trivia(ctx: &Context, msg: &Message) -> CommandResult {
 
 #[command]
 #[usage(": ~excuse")]
-#[description("Generate a random excuse for not joining the fun!")]
+#[description("Generate a random excuse why dev work isn't complete!")]
 pub async fn excuse(ctx: &Context, msg: &Message) -> CommandResult {
     let excuse = REQESUT
-        .get("https://excuser.herokuapp.com/v1/excuse")
+        .get("https://api.devexcus.es")
         .send()
         .await?
-        .json::<Vec<Excuse>>()
-        .await?
-        .into_iter()
-        .next();
+        .json::<Excuse>()
+        .await
+        .unwrap();
 
-    match excuse {
-        Some(excuse) => msg.reply(ctx, excuse.excuse).await?,
-        None => msg.reply(ctx, "Shit's broken yo!").await?,
-    };
+    msg.reply(ctx, excuse.text).await?;
     Ok(())
 }
 
 #[command]
-#[usage(": ~chuck")]
+#[usage(": ~chuck_norris")]
+#[example(": ~chuck, ~chuck_norris, ~chucknorris")]
 #[description("Get your daily Chuck Norris fact!")]
 #[aliases("chuck", "chucknorris")]
 pub async fn chuck_norris(ctx: &Context, msg: &Message) -> CommandResult {
@@ -135,7 +132,7 @@ pub async fn face(ctx: &Context, msg: &Message) -> CommandResult {
     msg.channel_id
         .send_message(ctx, |m| {
             m.embed(|e| {
-                e.image("https://thispersondoesnotexist.com/image");
+                e.image(": https://thispersondoesnotexist.com/image");
                 e
             })
         })
@@ -144,7 +141,8 @@ pub async fn face(ctx: &Context, msg: &Message) -> CommandResult {
 }
 
 #[command]
-#[usage(": ~count test")]
+#[usage(": ~count <phrase>")]
+#[example(": ~count turkey, ~count Turkey Tuesdays")]
 #[description("Counts the number of occurance of a phrase in a messages")]
 pub async fn count(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     //filter out the message content that starts with "~"
@@ -186,6 +184,7 @@ pub async fn flip(ctx: &Context, msg: &Message) -> CommandResult {
 
 #[command]
 #[usage(": ~haphazardly item1,item2,item3...itemN")]
+#[example(": ~haphazardly 1,2,test,nickel,im having too much fun,8")]
 #[description("Choose a random item from a provided list")]
 pub async fn haphazardly(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     if args.is_empty() {
@@ -211,6 +210,7 @@ pub async fn haphazardly(ctx: &Context, msg: &Message, args: Args) -> CommandRes
 
 #[command]
 #[usage(": ~roll | ~roll <number> | ~roll <number>d<number>")]
+#[example(": ~roll | ~roll 69 | ~roll 4d10")]
 #[max_args(1)]
 #[description("Roll a dice")]
 pub async fn roll(ctx: &Context, msg: &Message, args: Args) -> CommandResult {

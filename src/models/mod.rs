@@ -23,9 +23,8 @@ pub struct Trivia {
 
 #[derive(Serialize, Deserialize)]
 pub struct Excuse {
-    id: i32,
-    pub excuse: String,
-    category: String,
+    id: String,
+    pub text: String,
 }
 
 #[derive(Serialize, Deserialize)]

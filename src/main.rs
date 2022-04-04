@@ -17,6 +17,7 @@ use serenity::prelude::Mentionable;
 lazy_static! {
     static ref REQESUT: reqwest::Client = reqwest::Client::new();
     static ref REGEX_DICE: Regex = Regex::new(r"^([1-9][0-9]?|100)[Dd]([1-9]\d*)$").unwrap();
+    static ref HARDLY: Regex = Regex::new(r"(\w+(?:[aeiou]r|re))\W?").unwrap();
 }
 
 mod commands;
@@ -59,14 +60,19 @@ struct Handler;
 #[async_trait]
 impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
-        if !msg.author.bot && is_thanks(&msg.content) {
-            let _ = msg
-                .channel_id
-                .say(
-                    &ctx.http,
-                    format!("No, thank you {}!", msg.author.mention()),
-                )
-                .await;
+        if !msg.author.bot {
+            if is_thanks(&msg.content) {
+                let _ = msg
+                    .channel_id
+                    .say(
+                        &ctx.http,
+                        format!("No, thank you {}!", msg.author.mention()),
+                    )
+                    .await;
+            }
+            if let Some(hardly) = hardly(&msg.content) {
+                let _ = msg.channel_id.say(&ctx.http, hardly).await;
+            }
         }
     }
 
@@ -75,6 +81,18 @@ impl EventHandler for Handler {
     }
 }
 
+fn hardly(msg: &str) -> Option<String> {
+    if let Some(caps) = HARDLY.captures(msg) {
+        let word = caps.get(1).unwrap().as_str();
+        Some(format!(
+            "{}{}? I hardly know her!",
+            word[0..1].to_uppercase(),
+            &word[1..]
+        ))
+    } else {
+        None
+    }
+}
 fn is_thanks(msg: &str) -> bool {
     msg.to_lowercase().contains("thank") || msg.to_lowercase().contains("thx")
 }

@@ -220,48 +220,45 @@ pub async fn roll(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
         return Ok(());
     }
 
-    if !args.is_empty() {
-        match REGEX_DICE.captures(args.message()) {
-            Some(captures) => {
-                let dice_count = captures.get(1).unwrap().as_str().parse::<u8>().unwrap();
-                let dice_sides = captures.get(2).unwrap().as_str().parse::<u64>().unwrap();
-                let mut dice_rolls: Vec<u128> = Vec::new();
-                for _ in 0..dice_count {
-                    dice_rolls.push(rand::thread_rng().gen_range(1..dice_sides + 1).into());
-                }
-                let response = format!(
-                    "Rolled {}d{}!\n[{}]\nTotal: {}",
-                    dice_count,
-                    dice_sides,
-                    dice_rolls
-                        .iter()
-                        .map(|r| r.to_string())
-                        .collect::<Vec<String>>()
-                        .join(", "),
-                    dice_rolls.iter().sum::<u128>()
-                );
-                if response.len() > 2000 {
-                    msg.reply(ctx, "Too many dice to display!").await?;
-                } else {
-                    msg.reply(ctx, response).await?;
-                }
+    match REGEX_DICE.captures(args.message()) {
+        Some(captures) => {
+            let dice_count = captures.get(1).unwrap().as_str().parse::<u8>().unwrap();
+            let dice_sides = captures.get(2).unwrap().as_str().parse::<u64>().unwrap();
+            let mut dice_rolls: Vec<u128> = Vec::new();
+            for _ in 0..dice_count {
+                dice_rolls.push(rand::thread_rng().gen_range(1..dice_sides + 1).into());
+            }
+            let response = format!(
+                "Rolled {}d{}!\n[{}]\nTotal: {}",
+                dice_count,
+                dice_sides,
+                dice_rolls
+                    .iter()
+                    .map(|r| r.to_string())
+                    .collect::<Vec<String>>()
+                    .join(", "),
+                dice_rolls.iter().sum::<u128>()
+            );
+            if response.len() > 2000 {
+                msg.reply(ctx, "Too many dice to display!").await?;
+            } else {
+                msg.reply(ctx, response).await?;
+            }
+            return Ok(());
+        }
+        None => match args.message().parse::<u64>() {
+            Ok(number) => {
+                let response = rand::thread_rng().gen_range(1..number + 1).to_string();
+                msg.reply(ctx, response).await?;
                 return Ok(());
             }
-            None => match args.message().parse::<u64>() {
-                Ok(number) => {
-                    let response = rand::thread_rng().gen_range(1..number + 1).to_string();
-                    msg.reply(ctx, response).await?;
-                    return Ok(());
-                }
-                Err(_) => {
-                    msg.reply(ctx, "Don't be a smart ass and pick a valid input!")
-                        .await?;
-                    return Ok(());
-                }
-            },
-        }
-    };
-    Ok(())
+            Err(_) => {
+                msg.reply(ctx, "Don't be a smart ass and pick a valid input!")
+                    .await?;
+                return Ok(());
+            }
+        },
+    }
 }
 
 #[command]

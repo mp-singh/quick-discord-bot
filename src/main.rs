@@ -45,7 +45,8 @@ use handlers::*;
     count,
     flip,
     roll,
-    haphazardly
+    haphazardly,
+    pirate
 )]
 struct General;
 

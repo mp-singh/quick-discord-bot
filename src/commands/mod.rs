@@ -275,3 +275,21 @@ pub async fn trump(ctx: &Context, msg: &Message) -> CommandResult {
     msg.reply(ctx, trump.message).await?;
     Ok(())
 }
+
+#[command]
+#[usage(": ~pirate")]
+#[min_args(1)]
+#[description("Translate english into something piratey could say in a drunken pirate voice.")]
+pub async fn pirate(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
+    let translated = REQESUT
+        .get("https://pirate.monkeyness.com/api/translate")
+        .query(&[("english", args.message().to_string())])
+        .header("Accept", "text/plain")
+        .send()
+        .await?
+        .text()
+        .await?;
+
+    msg.reply(ctx, translated).await?;
+    Ok(())
+}

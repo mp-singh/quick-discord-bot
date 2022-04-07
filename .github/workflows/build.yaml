@@ -17,7 +17,7 @@ jobs:
     - name: rustfmt
       run: cargo fmt -- --check
   test:
-    runs-on: ubuntu-lates
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - name: rustfmt

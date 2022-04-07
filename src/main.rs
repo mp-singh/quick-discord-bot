@@ -19,9 +19,7 @@ lazy_static! {
     static ref REGEX_DICE: Regex = Regex::new(r"^([1-9][0-9]?|100)[Dd]([1-9]\d*)$").unwrap();
     static ref HARDLY: Regex = Regex::new(r"(\w{2,}(?:[aeiou]r|re))(?:\W|$)").unwrap();
     static ref BLACK_LIST: HashSet<&'static str> = hashset![
-        "their", "another", "other", "tenor", "more", "there", "before", "never", "your", "after",
-        "over", "youre", "here", "hear", "floor", "bear", "fair", "fare", "faire", "fairer",
-        "four", "fore",
+        "another", "other", "tenor", "before", "never", "over", "youre", "fairer", "after"
     ];
 }
 
@@ -69,7 +67,7 @@ struct Handler;
 impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
         if !msg.author.bot {
-            if let Some(thanks) = is_thanks(&msg) {
+            if let Some(thanks) = thanks(&msg) {
                 let _ = msg.channel_id.say(&ctx.http, thanks).await;
             }
             if let Some(hardly) = hardly(&msg.content) {

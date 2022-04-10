@@ -1,3 +1,8 @@
+use std::fs;
+
+use image_conv::conv;
+use image_conv::{Filter, PaddingType};
+use photon_rs::native::{open_image_from_bytes, save_image};
 use rand::prelude::SliceRandom;
 use rand::Rng;
 use serenity::client::Context;
@@ -7,7 +12,7 @@ use serenity::model::channel::Message;
 use serenity::utils::Content;
 use serenity::utils::ContentModifier::Spoiler;
 
-use crate::{REGEX_DICE, REQESUT};
+use crate::{REGEX_DICE, REQESUT, TRANSFORMATION_TYPES};
 
 use crate::models::*;
 
@@ -291,5 +296,61 @@ pub async fn pirate(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
         .await?;
 
     msg.reply(ctx, translated).await?;
+    Ok(())
+}
+
+#[command]
+#[usage(": ~cv")]
+#[min_args(1)]
+#[max_args(1)]
+#[description("")]
+pub async fn cv(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
+    if msg.attachments.is_empty() {
+        msg.reply(ctx, "You need to provide an image to translate!")
+            .await?;
+        return Ok(());
+    }
+    let transformation = match TRANSFORMATION_TYPES.contains_key(&args.message()) {
+        true => TRANSFORMATION_TYPES.get(&args.message()).unwrap(),
+        false => {
+            msg.reply(ctx, "You need to provide a valid transformation!")
+                .await?;
+            return Ok(());
+        }
+    };
+
+    let api_image = REQESUT
+        .get(&msg.attachments.first().unwrap().url)
+        .send()
+        .await?
+        .bytes()
+        .await?
+        .to_vec();
+
+    let img = open_image_from_bytes(&api_image).expect("No such file found");
+
+    let filter = Filter::from(transformation.to_vec(), 3, 3);
+
+    // Apply convolution
+    let transformed = conv::convolution(&img, filter, 1, PaddingType::UNIFORM(1));
+    let filename = format!("transformed-{}.png", chrono::Utc::now().timestamp());
+    //TODO: figure out a way to not save the image to disk and then removing it later
+    save_image(transformed, &filename);
+    let file_path = format!("./{}", &filename);
+
+    let _ = msg
+        .channel_id
+        .send_message(&ctx.http, |m| {
+            m.embed(|e| {
+                e.title("Image after transformation")
+                    .image(format!("attachment://{}", &filename))
+                // .footer(|f| f.text("Note this image message will be deleted in 24 hours."))
+            })
+            .add_file(file_path.as_str())
+        })
+        .await;
+
+    //cleanup file
+    fs::remove_file(file_path)?;
     Ok(())
 }

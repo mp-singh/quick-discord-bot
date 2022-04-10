@@ -1,7 +1,7 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::env;
 
-use maplit::hashset;
+use maplit::{hashmap, hashset};
 use serenity::async_trait;
 use serenity::client::{Client, Context, EventHandler};
 
@@ -18,8 +18,33 @@ lazy_static! {
     static ref REQESUT: reqwest::Client = reqwest::Client::new();
     static ref REGEX_DICE: Regex = Regex::new(r"^([1-9][0-9]?|100)[Dd]([1-9]\d*)$").unwrap();
     static ref HARDLY: Regex = Regex::new(r"(\w{2,}(?:[aeiou]r|re))(?:\W|$)").unwrap();
+    static ref TRANSFORMATION_TYPES: HashMap<&'static str, Vec<f32>> = hashmap! {
+        "laplacian" => vec![0.0, 1.0, 0.0, 1.0, -4.0, 1.0, 0.0, 1.0, 0.0],
+        "sobel" => vec![-1.0, 0.0, 1.0, -2.0, 0.0, 2.0, -1.0, 0.0, 1.0],
+        "prewitt" => vec![-1.0, 0.0, 1.0, -1.0, 0.0, 1.0, -1.0, 0.0, 1.0],
+        "roberts" => vec![1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0],
+        "scharr" => vec![-3.0, 0.0, 3.0, -10.0, 0.0, 10.0, -3.0, 0.0, 3.0],
+        "laplacian_of_gaussian" => vec![0.0, 0.0, 1.0, 2.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+        "gaussian" => vec![1.0, 2.0, 1.0, 2.0, 4.0, 2.0, 1.0, 2.0, 1.0],
+        "unsharp_mask" => vec![0.0, -1.0, 0.0, -1.0, 5.0, -1.0, 0.0, -1.0, 0.0],
+    };
     static ref BLACK_LIST: HashSet<&'static str> = hashset![
-        "another", "other", "tenor", "before", "never", "over", "youre", "fairer", "after"
+        "another",
+        "other",
+        "tenor",
+        "before",
+        "never",
+        "over",
+        "youre",
+        "fairer",
+        "after",
+        "everywhere",
+        "ever",
+        "hardware",
+        "software",
+        "anywhere",
+        "super",
+        "order"
     ];
 }
 
@@ -44,7 +69,8 @@ use handlers::*;
     flip,
     roll,
     haphazardly,
-    pirate
+    pirate,
+    cv
 )]
 struct General;
 

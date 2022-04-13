@@ -354,3 +354,30 @@ pub async fn cv(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     fs::remove_file(file_path)?;
     Ok(())
 }
+
+#[command]
+#[usage(": ~lucky")]
+#[min_args(1)]
+#[description("Links to Googles im feeling lucky link when you search for something")]
+pub async fn lucky(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
+    let response = REQESUT
+        .get("https://www.google.com/search")
+        .query(&[
+            ("q", args.message().to_string()),
+            ("btnI", "I'm Feeling Lucky".to_string()),
+        ])
+        .send()
+        .await
+        .unwrap();
+
+    let url = response
+        .headers()
+        .get("Location")
+        .unwrap()
+        .to_str()
+        .unwrap();
+
+    msg.reply(ctx, url.split("q=").collect::<Vec<&str>>()[1])
+        .await?;
+    Ok(())
+}

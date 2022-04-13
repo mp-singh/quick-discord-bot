@@ -2,6 +2,7 @@ use std::collections::{HashMap, HashSet};
 use std::env;
 
 use maplit::{hashmap, hashset};
+use reqwest::redirect;
 use serenity::async_trait;
 use serenity::client::{Client, Context, EventHandler};
 
@@ -15,7 +16,10 @@ use serenity::model::id::UserId;
 use serenity::model::prelude::Ready;
 
 lazy_static! {
-    static ref REQESUT: reqwest::Client = reqwest::Client::new();
+    static ref REQESUT: reqwest::Client = reqwest::Client::builder()
+        .redirect(redirect::Policy::none())
+        .build()
+        .unwrap();
     static ref REGEX_DICE: Regex = Regex::new(r"^([1-9][0-9]?|100)[Dd]([1-9]\d*)$").unwrap();
     static ref HARDLY: Regex = Regex::new(r"(\w{2,}(?:[aeiou]r|re))(?:\W|$)").unwrap();
     static ref TRANSFORMATION_TYPES: HashMap<&'static str, Vec<f32>> = hashmap! {
@@ -70,7 +74,8 @@ use handlers::*;
     roll,
     haphazardly,
     pirate,
-    cv
+    cv,
+    lucky
 )]
 struct General;
 

@@ -75,7 +75,9 @@ use handlers::*;
     haphazardly,
     pirate,
     cv,
-    lucky
+    lucky,
+    face,
+    now
 )]
 struct General;
 

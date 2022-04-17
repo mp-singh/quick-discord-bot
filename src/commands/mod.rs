@@ -134,14 +134,34 @@ pub async fn chuck_norris(ctx: &Context, msg: &Message) -> CommandResult {
 #[description("Generates a face that doesn't exist")]
 pub async fn face(ctx: &Context, msg: &Message) -> CommandResult {
     // attach the image to the message
-    msg.channel_id
-        .send_message(ctx, |m| {
+
+    let image = REQESUT
+        .get("https://thispersondoesnotexist.com/image")
+        .send()
+        .await?
+        .bytes()
+        .await?
+        .to_vec();
+
+    //save image
+    let filename = format!("face-{}.png", chrono::Utc::now().timestamp());
+    fs::write(&filename, image).expect("Unable to write file");
+    let file_path = format!("./{}", &filename);
+
+    let _ = msg
+        .channel_id
+        .send_message(&ctx.http, |m| {
             m.embed(|e| {
-                e.image(": https://thispersondoesnotexist.com/image");
-                e
+                e.title("This face doesn't exist")
+                    .image(format!("attachment://{}", &filename))
+                // .footer(|f| f.text("Note this image message will be deleted in 24 hours."))
             })
+            .add_file(file_path.as_str())
         })
-        .await?;
+        .await;
+    //cleanup file
+    fs::remove_file(file_path)?;
+
     Ok(())
 }
 
@@ -357,7 +377,6 @@ pub async fn cv(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
 
 #[command]
 #[usage(": ~lucky")]
-#[min_args(1)]
 #[description("Links to Googles im feeling lucky link when you search for something")]
 pub async fn lucky(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     let response = REQESUT
@@ -378,6 +397,15 @@ pub async fn lucky(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
         .unwrap();
 
     msg.reply(ctx, url.split("q=").collect::<Vec<&str>>()[1])
+        .await?;
+    Ok(())
+}
+
+#[command]
+#[usage(": ~now")]
+#[description("Returns the time")]
+pub async fn now(ctx: &Context, msg: &Message) -> CommandResult {
+    msg.reply(ctx, format!("<t:{}:F>", chrono::Utc::now().timestamp()))
         .await?;
     Ok(())
 }

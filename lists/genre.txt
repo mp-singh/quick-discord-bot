@@ -1,0 +1,14 @@
+horror
+thriller
+comedy
+romance
+action
+documentary
+sci-fi
+romantic-comedy
+sci-fi thriller
+satire
+adventure
+drama
+family film
+action adventure

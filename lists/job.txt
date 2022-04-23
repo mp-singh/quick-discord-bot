@@ -1,0 +1,213 @@
+carpenter
+accountant
+lumberjack
+police officer
+detective
+retired cop
+retired detective
+judge
+electrician
+stripper
+soldier
+mercenary
+ninja
+assassin
+samurai
+boxer
+professional wrestler
+highschool teacher
+professor
+elementary school teacher
+general
+icecream retailer
+<thing> retailer
+prison guard
+surfer
+social worker
+terrorist
+doctor
+priest
+hobo
+captain
+auctioneer
+dentist
+pimp
+druglord
+knight
+bouncer
+hockey player
+lawyer
+salesperson
+CIA-agent
+theif
+pilot
+wizard
+mountain climber
+gangster
+mobster
+kidnapper
+president
+CEO
+scientist
+psychic
+superhero
+serial killer
+substitute teacher
+psychiatrist
+murder suspect
+murderer
+radio announcer
+sports announcer
+writer
+spy
+bankrobber
+robber
+club owner
+mechanic
+nun
+clown
+cowboy
+ghost
+student
+witch
+vampire
+demon
+zombie
+pirate
+faerie
+explosives expert
+<thing> expert
+criminal investigator
+<thing> investigator
+computer specialist
+<thing> specialist
+computer programmer
+secretary
+coal miner
+steel miner
+gold miner
+<thing> miner
+surgeon
+nurse
+taxi driver
+plumber
+truck driver
+inventor
+guardian angel
+agent
+golf caddy
+talent scout
+sniper
+movie star
+cult leader
+rancher
+butcher
+bounty hunter
+bird watcher
+refugee
+singer
+executive
+lab technician
+athlete
+hermit
+journalist
+rockstar
+compulsive gambler
+chiropractor
+philospher
+hitman
+monk
+news reporter
+business tycoon
+<thing> tycoon
+computer hacker
+janitor
+robot
+optometrist
+engineer
+talk show host
+tour guide
+ambassador
+baby-sitter
+werewolf
+paperboy
+chef
+life-guard
+puppeteer
+car salesman
+<thing> salesman
+opera singer
+politician
+interior decorator
+prisoner of war
+prisoner
+cartoonist
+villain
+mime
+Elvis impersonater
+temptress
+mummy
+ghoul
+athlete
+health inspector
+<thing> inspector
+critic
+bellboy
+butler
+maid
+surrogate
+slave
+mafia don
+bat researcher
+<thing> researcher
+therapist
+mentor
+karate legend
+pool shark
+loan shark
+farmer
+pharmacist
+bank teller
+limo driver
+security guard
+bodyguard
+taxi driver
+garbage collector
+<thing> collector
+glutton
+stay-at-home parent
+bartender
+dogcatcher
+magician
+necromancer
+greaser
+fencer
+has-been
+game-show host
+talk-show host
+spokesperson
+labourer
+cartographer
+mad scientist
+jester
+prankster
+college student
+artist
+party animal
+waitor
+stoner
+game-show contestent
+camera man
+screenwriter
+voyeur
+super-intendant
+principal
+goon
+henchman
+cronie
+fligh attendant
+creature
+monster
+beast
+photojournalist
+messiah

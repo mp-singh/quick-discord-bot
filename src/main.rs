@@ -14,6 +14,7 @@ use serenity::framework::standard::{macros::group, CommandResult, StandardFramew
 use serenity::model::channel::Message;
 use serenity::model::id::UserId;
 use serenity::model::prelude::Ready;
+use quick_discord_bot::read_dir;
 
 lazy_static! {
     static ref REQESUT: reqwest::Client = reqwest::Client::builder()
@@ -22,6 +23,10 @@ lazy_static! {
         .unwrap();
     static ref REGEX_DICE: Regex = Regex::new(r"^([1-9][0-9]?|100)[Dd]([1-9]\d*)$").unwrap();
     static ref HARDLY: Regex = Regex::new(r"(\w{2,}(?:[aeiou]r|re))(?:\W|$)").unwrap();
+    static ref MOVIE1: Regex = Regex::new(r"<([a-zA-Z]+)([0-9]+)?>").unwrap();
+    static ref MOVIE_SYNOPSIS1: Regex = Regex::new(r"a\s([aeiou])").unwrap();
+    static ref MOVIE_SYNOPSIS2: Regex = Regex::new(r"([.?!]\s+)([a-z])").unwrap();
+    static ref MOVIE_CONTENTS: HashMap<String, Vec<String>> = read_dir(String::from("lists"));
     static ref TRANSFORMATION_TYPES: HashMap<&'static str, Vec<f32>> = hashmap! {
         "laplacian" => vec![0.0, 1.0, 0.0, 1.0, -4.0, 1.0, 0.0, 1.0, 0.0],
         "sobel" => vec![-1.0, 0.0, 1.0, -2.0, 0.0, 2.0, -1.0, 0.0, 1.0],
@@ -77,7 +82,8 @@ use handlers::*;
     cv,
     lucky,
     face,
-    now
+    now,
+    movie
 )]
 struct General;
 

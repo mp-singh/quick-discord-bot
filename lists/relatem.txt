@@ -1,0 +1,10 @@
+father
+brother-in-law
+grandson
+nephew
+grandfather
+brother
+son
+husband
+uncle
+cousin

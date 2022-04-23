@@ -1,0 +1,53 @@
+find
+seek
+train
+kill
+investigate
+romance
+seduce
+wrongfully accuse
+murder
+track down
+frame
+kidnap
+run over
+hire
+employ
+torture
+blackmail
+terminate
+ressurect
+abuse
+attack
+curse
+raise
+teach
+torment
+fillet
+slaughter
+possess
+get turned into
+switch bodies with
+switch places with
+switch <thing> with
+marry
+divorce
+cheat on
+make a deal with
+have an affair with
+have sexual relations with
+buy from
+buy <thing> from
+steal from
+steal <thing> from
+get decieved by
+get betrayed by
+crush the hopes of
+fight for
+seek the attention of
+care for
+nurse
+upset
+impress
+become an object of desire for
+become passionately entwined with

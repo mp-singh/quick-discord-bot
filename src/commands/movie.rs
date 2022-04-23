@@ -12,15 +12,12 @@ fn pick(template: String, picked: &mut HashMap<String, Vec<String>>) -> String {
     if !picked.contains_key(&template) {
         picked.insert(template.clone(), Vec::new());
     }
-    picked
-        .get_mut(&template)
-        .unwrap()
-        .push(String::from(pickedval.clone()));
-    return pickedval;
+    picked.get_mut(&template).unwrap().push(pickedval.clone());
+    pickedval
 }
 
 fn populate_template(tmpl: String, picked: &mut HashMap<String, Vec<String>>) -> String {
-    let mut template = pick(String::from(tmpl), picked);
+    let mut template = pick(tmpl, picked);
     while template.find('<').is_some() {
         template = MOVIE1
             .replace_all(&template, |caps: &regex::Captures| {
@@ -29,11 +26,9 @@ fn populate_template(tmpl: String, picked: &mut HashMap<String, Vec<String>>) ->
                     return pick(tmpl, picked);
                 }
                 let num = caps.get(2).unwrap().as_str().parse::<usize>().unwrap() - 1;
-                let list = picked.get(&tmpl);
-                if list.is_some() {
-                    let found = list.unwrap().get(num);
-                    if found.is_some() {
-                        return found.unwrap().clone();
+                if let Some(list) = picked.get(&tmpl) {
+                    if let Some(found) = list.get(num) {
+                        return found.clone();
                     }
                 }
                 return pick(tmpl, picked);
@@ -41,7 +36,7 @@ fn populate_template(tmpl: String, picked: &mut HashMap<String, Vec<String>>) ->
             .to_mut()
             .clone();
     }
-    return template;
+    template
 }
 
 pub fn generate_movie() -> Movie {
@@ -55,8 +50,8 @@ pub fn generate_movie() -> Movie {
         })
         .to_mut()
         .clone();
-    return Movie {
+    Movie {
         title: titlecase(&title),
-        synopsis: synopsis,
-    };
+        synopsis,
+    }
 }

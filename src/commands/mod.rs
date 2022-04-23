@@ -417,6 +417,10 @@ pub async fn now(ctx: &Context, msg: &Message) -> CommandResult {
 #[description("Generates a random movie")]
 pub async fn movie(ctx: &Context, msg: &Message) -> CommandResult {
     let movie = movie::generate_movie();
-    msg.reply(ctx, format!("__**{}**__\n\n{}", movie.title, movie.synopsis)).await?;
+    msg.reply(
+        ctx,
+        format!("__**{}**__\n\n{}", movie.title, movie.synopsis),
+    )
+    .await?;
     Ok(())
 }

@@ -7,6 +7,7 @@ use serenity::async_trait;
 use serenity::client::{Client, Context, EventHandler};
 
 use lazy_static::lazy_static;
+use quick_discord_bot::read_dir;
 use regex::Regex;
 use serenity::framework::standard::macros::help;
 use serenity::framework::standard::{help_commands, Args, CommandGroup, HelpOptions};
@@ -14,7 +15,6 @@ use serenity::framework::standard::{macros::group, CommandResult, StandardFramew
 use serenity::model::channel::Message;
 use serenity::model::id::UserId;
 use serenity::model::prelude::Ready;
-use quick_discord_bot::read_dir;
 
 lazy_static! {
     static ref REQESUT: reqwest::Client = reqwest::Client::builder()

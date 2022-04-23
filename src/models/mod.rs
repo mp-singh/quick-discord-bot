@@ -44,5 +44,5 @@ pub struct Trump {
 
 pub struct Movie {
     pub title: String,
-    pub synopsis: String
+    pub synopsis: String,
 }

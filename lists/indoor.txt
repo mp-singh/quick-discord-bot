@@ -1,0 +1,46 @@
+in a bathroom
+in a bathtub
+in a <adj> cottage
+in a haunted house
+in a whorehouse
+in an attic
+in a train station
+in a subway station
+in a circus tent
+in a bedroom
+in the air vents
+in a prison
+in jail
+in a cage
+in a bunker
+in a trench
+in a palace
+in a kitchen
+in a swimming pool
+in a living room
+in a den
+in a mall
+in a weapon shop
+in a <thing> shop
+in a day care center
+in an elementary school
+in a high school
+in a <job> school
+in a military base
+in a top secret military complex
+in a <adj> military complex
+in a bank
+in an opium den
+in a mall
+in a grocery store
+in a police station
+in a nuclear submarine
+in a tent
+in a convenience store
+in an auditorium
+in a church
+in a temple
+in an airport
+in a clothing store
+in a <thing> store
+in a suburban home

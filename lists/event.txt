@@ -1,0 +1,122 @@
+birthday party
+car ride
+<thing> ride
+sleep over
+date
+meal
+fancy dinner
+<adj> dinner
+picnic lunch
+fishing trip
+bus ride
+vacation
+murder
+court date
+hearing
+trial
+investigation
+mission
+protest
+rampage
+car chase
+battle
+surfing lesson
+conversation
+lesson
+<job> lesson
+rescue
+government cover-up
+car accident
+<thing> accident
+carnival
+plane crash
+knife fight
+demolition
+barbeque
+child sacrifice
+sacrifice
+<thing> sacrifice
+binge
+rampage
+performance
+concert
+day at work
+election campaign
+lecture
+buffet
+movie
+<adj> movie
+hollywood premeire
+terrorist attack
+hostage situation
+bank robbery
+boxing match
+haircut
+bloodbath
+massacre
+operation
+volleyball match
+sword fight
+fist fight
+<thing> fight
+race
+horse race
+rat race
+<thing> race
+bar fight
+night in the city
+day at the beach
+day with grandma
+day <indoor>
+day <outdoor>
+night <indoor>
+night <outdoor>
+tour
+<thing> tour
+medical examination
+meeting
+sermon
+jazz performance
+rock concert
+hurricane
+thunderstorm
+time out
+trip out-of-state
+summer vacation
+camping trip
+fishing trip
+parade
+<adj> parade
+public demonstration
+game of monopoly
+showdown
+gunfight
+fight to the death
+nuclear meltdown
+napalm strike
+holiday
+celebration
+party
+<thing> party
+lesson
+<thing> lesson
+baby shower
+shower
+bridal shower
+wedding
+wedding rehersal
+engagement
+undercover mission
+stealth mission
+<adj> mission
+<job> picnic
+company picnic
+company party
+rummage sale
+garage sale
+yard sale
+trip to the dump
+drug bust
+ransom drop
+kidnapping
+night of gambling

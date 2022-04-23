@@ -1,0 +1,10 @@
+mother
+sister
+daughter
+wife
+aunt
+neice
+grandmother
+granddaughter
+sister-in-law
+cousin

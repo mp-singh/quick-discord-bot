@@ -41,3 +41,8 @@ pub struct ChuckNorris {
 pub struct Trump {
     pub message: String,
 }
+
+pub struct Movie {
+    pub title: String,
+    pub synopsis: String
+}

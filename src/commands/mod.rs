@@ -16,6 +16,8 @@ use crate::{REGEX_DICE, REQESUT, TRANSFORMATION_TYPES};
 
 use crate::models::*;
 
+mod movie;
+
 #[command]
 pub async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
     msg.reply(ctx, "Pong").await?;
@@ -407,5 +409,14 @@ pub async fn lucky(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
 pub async fn now(ctx: &Context, msg: &Message) -> CommandResult {
     msg.reply(ctx, format!("<t:{}:F>", chrono::Utc::now().timestamp()))
         .await?;
+    Ok(())
+}
+
+#[command]
+#[usage(": ~movie")]
+#[description("Generates a random movie")]
+pub async fn movie(ctx: &Context, msg: &Message) -> CommandResult {
+    let movie = movie::generate_movie();
+    msg.reply(ctx, format!("__**{}**__\n\n{}", movie.title, movie.synopsis)).await?;
     Ok(())
 }

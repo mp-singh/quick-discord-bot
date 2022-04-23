@@ -29,20 +29,18 @@ pub fn read_dir(dir: String) -> HashMap<String, Vec<String>> {
     for path in paths {
         let mut cur: Vec<String> = Vec::new();
         let curpath = path.unwrap().path();
-        let filename = String::from(curpath.file_name().unwrap().to_str().unwrap());
-        let filetype = String::from(&filename[..(filename.len() - 4)]);
+        let filename = curpath.file_name().unwrap().to_str().unwrap().to_string();
+        let filetype = filename[..(filename.len() - 4)].to_string();
         if let Ok(lines) = read_lines(curpath) {
-            for line in lines {
-                if let Ok(text) = line {
-                    if !text.is_empty() {
-                        cur.push(text);
-                    }
+            for line in lines.flatten() {
+                if !line.is_empty() {
+                    cur.push(line);
                 }
             }
             map.insert(filetype, cur);
         }
     }
-    return map;
+    map
 }
 
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>

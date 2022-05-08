@@ -11,6 +11,7 @@ use serenity::framework::standard::{macros::command, CommandResult};
 use serenity::model::channel::Message;
 use serenity::utils::Content;
 use serenity::utils::ContentModifier::Spoiler;
+use serenity::model::interactions::message_component::ButtonStyle;
 
 use crate::{REGEX_DICE, REQESUT, TRANSFORMATION_TYPES};
 
@@ -422,5 +423,49 @@ pub async fn movie(ctx: &Context, msg: &Message) -> CommandResult {
         format!("__**{}**__\n\n{}", movie.title, movie.synopsis),
     )
     .await?;
+    Ok(())
+}
+
+#[command]
+async fn xkcd(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
+    let comic_num = args.single::<u32>().unwrap_or(0);
+    let xkcd_url = format!("https://xkcd.com/{}/info.0.json", comic_num);
+    let response = REQESUT.get(xkcd_url).send().await?;
+
+    if response.status() == 404 {
+        msg.reply(ctx, "Please provide a valid xkcd comic ID!")
+            .await?;
+        return Ok(());
+    }
+
+    let comic = response.json::<XkcdComic>().await?;
+    let title = comic.title;
+    let alt = comic.alt;
+    let num = comic.num;
+    let page = format!("https://xkcd.com/{}", num);
+    let wiki = format!("https://explainxkcd.com/wiki/index.php/{}", num);
+
+    msg.channel_id
+        .send_message(ctx, |message| {
+            message.embed(|embed| {
+                embed.title(title);
+                embed.description(alt);
+                embed.image(comic.img.as_str());
+                embed.footer(|f| f.text(format!("xkcd comic no. {}", &num)));
+                embed
+            });
+            message.components(|c| {
+                c.create_action_row(|row| {
+                    row.create_button(|b| b.label("View xkcd image page").style(ButtonStyle::Link).url(page))
+                });
+                c.create_action_row(|row| {
+                    row.create_button(|b| b.label("View xkcdexplanation").style(ButtonStyle::Link).url(wiki))
+                });
+                c
+            });
+            message
+        })
+        .await?;
+
     Ok(())
 }

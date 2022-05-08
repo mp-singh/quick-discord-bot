@@ -9,9 +9,9 @@ use serenity::client::Context;
 use serenity::framework::standard::Args;
 use serenity::framework::standard::{macros::command, CommandResult};
 use serenity::model::channel::Message;
+use serenity::model::interactions::message_component::ButtonStyle;
 use serenity::utils::Content;
 use serenity::utils::ContentModifier::Spoiler;
-use serenity::model::interactions::message_component::ButtonStyle;
 
 use crate::{REGEX_DICE, REQESUT, TRANSFORMATION_TYPES};
 
@@ -456,10 +456,18 @@ async fn xkcd(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
             });
             message.components(|c| {
                 c.create_action_row(|row| {
-                    row.create_button(|b| b.label("View xkcd image page").style(ButtonStyle::Link).url(page))
+                    row.create_button(|b| {
+                        b.label("View xkcd image page")
+                            .style(ButtonStyle::Link)
+                            .url(page)
+                    })
                 });
                 c.create_action_row(|row| {
-                    row.create_button(|b| b.label("View xkcdexplanation").style(ButtonStyle::Link).url(wiki))
+                    row.create_button(|b| {
+                        b.label("View xkcdexplanation")
+                            .style(ButtonStyle::Link)
+                            .url(wiki)
+                    })
                 });
                 c
             });

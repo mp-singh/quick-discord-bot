@@ -132,9 +132,7 @@ async fn main() {
         .help(&MY_HELP) // set the bot's prefix to "~"
         .group(&GENERAL_GROUP);
 
-    // let token = env::var("DISCORD_TOKEN").expect("token");
-    let token = "OTUzNzYyMDM4OTczMzYyMjM3.YjJSHg.oCZYx0yUFoa7-mYr7OekdyBh99o";
-
+    let token = env::var("DISCORD_TOKEN").expect("token");
     let mut client = Client::builder(token, GatewayIntents::default())
         .event_handler(Handler)
         .framework(framework)

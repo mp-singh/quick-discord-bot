@@ -1,4 +1,5 @@
 use std::fs;
+use std::sync::Arc;
 
 use image_conv::conv;
 use image_conv::{Filter, PaddingType};
@@ -9,6 +10,7 @@ use serenity::client::Context;
 use serenity::framework::standard::Args;
 use serenity::framework::standard::{macros::command, CommandResult};
 use serenity::model::channel::Message;
+use serenity::model::interactions::message_component::ButtonStyle;
 use serenity::utils::Content;
 use serenity::utils::ContentModifier::Spoiler;
 
@@ -422,5 +424,73 @@ pub async fn movie(ctx: &Context, msg: &Message) -> CommandResult {
         format!("__**{}**__\n\n{}", movie.title, movie.synopsis),
     )
     .await?;
+    Ok(())
+}
+
+#[command]
+#[usage(": ~xkcd | ~xkcd random | ~xkcd <comic_num>")]
+#[example(": ~xkcd | ~xkcd random | ~xkcd 69")]
+#[description(
+    "Get an xkcd comic. If you provide an invalid comic number, you will get a latest comic."
+)]
+async fn xkcd(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
+    let latest = REQESUT
+        .get("https://xkcd.com/info.0.json")
+        .send()
+        .await?
+        .json::<XkcdComic>()
+        .await?;
+    let mut comic_num = latest.num;
+    if args.message() == "random" {
+        comic_num = rand::thread_rng().gen_range(1..comic_num + 1)
+    }
+
+    comic_num = args.single::<u16>().unwrap_or(comic_num);
+    let xkcd_url = format!("https://xkcd.com/{}/info.0.json", comic_num);
+    let response = REQESUT.get(xkcd_url).send().await?;
+
+    if response.status() == 404 {
+        msg.reply(ctx, "Please provide a valid xkcd comic ID!")
+            .await?;
+        return Ok(());
+    }
+
+    let comic = response.json::<XkcdComic>().await?;
+    let title = comic.title;
+    let alt = comic.alt;
+    let num = comic.num;
+    let page = format!("https://xkcd.com/{}", num);
+    let wiki = format!("https://explainxkcd.com/wiki/index.php/{}", num);
+
+    msg.channel_id
+        .send_message(ctx, |message| {
+            message.embed(|embed| {
+                embed.title(title);
+                embed.description(alt);
+                embed.image(comic.img.as_str());
+                embed.footer(|f| f.text(format!("xkcd comic no. {}", &num)));
+                embed
+            });
+            message.components(|c| {
+                c.create_action_row(|row| {
+                    row.create_button(|b| {
+                        b.label("View xkcd image page")
+                            .style(ButtonStyle::Link)
+                            .url(page)
+                    })
+                });
+                c.create_action_row(|row| {
+                    row.create_button(|b| {
+                        b.label("View xkcd explanation")
+                            .style(ButtonStyle::Link)
+                            .url(wiki)
+                    })
+                });
+                c
+            });
+            message
+        })
+        .await?;
+
     Ok(())
 }

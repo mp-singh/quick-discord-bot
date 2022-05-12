@@ -46,3 +46,11 @@ pub struct Movie {
     pub title: String,
     pub synopsis: String,
 }
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct XkcdComic {
+    pub title: String,
+    pub num: u16,
+    pub alt: String,
+    pub img: String,
+}

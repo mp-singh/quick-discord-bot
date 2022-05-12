@@ -63,6 +63,7 @@ mod models;
 
 use commands::*;
 use handlers::*;
+use serenity::prelude::GatewayIntents;
 
 #[group]
 #[commands(
@@ -83,7 +84,8 @@ use handlers::*;
     lucky,
     face,
     now,
-    movie
+    movie,
+    xkcd
 )]
 struct General;
 
@@ -131,7 +133,10 @@ async fn main() {
         .group(&GENERAL_GROUP);
 
     let token = env::var("DISCORD_TOKEN").expect("token");
-    let mut client = Client::builder(token)
+    let intents = GatewayIntents::GUILD_MESSAGES
+        | GatewayIntents::DIRECT_MESSAGES
+        | GatewayIntents::MESSAGE_CONTENT;
+    let mut client = Client::builder(token, intents)
         .event_handler(Handler)
         .framework(framework)
         .await

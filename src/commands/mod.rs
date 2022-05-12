@@ -1,4 +1,5 @@
 use std::fs;
+use std::sync::Arc;
 
 use image_conv::conv;
 use image_conv::{Filter, PaddingType};
@@ -427,8 +428,24 @@ pub async fn movie(ctx: &Context, msg: &Message) -> CommandResult {
 }
 
 #[command]
+#[usage(": ~xkcd | ~xkcd random | ~xkcd <comic_num>")]
+#[example(": ~xkcd | ~xkcd random | ~xkcd 69")]
+#[description(
+    "Get an xkcd comic. If you provide an invalid comic number, you will get a latest comic."
+)]
 async fn xkcd(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
-    let comic_num = args.single::<u32>().unwrap_or(0);
+    let latest = REQESUT
+        .get("https://xkcd.com/info.0.json")
+        .send()
+        .await?
+        .json::<XkcdComic>()
+        .await?;
+    let mut comic_num = latest.num;
+    if args.message() == "random" {
+        comic_num = rand::thread_rng().gen_range(1..comic_num + 1)
+    }
+
+    comic_num = args.single::<u16>().unwrap_or(comic_num);
     let xkcd_url = format!("https://xkcd.com/{}/info.0.json", comic_num);
     let response = REQESUT.get(xkcd_url).send().await?;
 
@@ -464,7 +481,7 @@ async fn xkcd(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
                 });
                 c.create_action_row(|row| {
                     row.create_button(|b| {
-                        b.label("View xkcdexplanation")
+                        b.label("View xkcd explanation")
                             .style(ButtonStyle::Link)
                             .url(wiki)
                     })

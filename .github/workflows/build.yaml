@@ -27,12 +27,12 @@ jobs:
     runs-on: ubuntu-latest
     # if: github.ref == 'refs/heads/main'
     steps:
-    - uses: actions/checkout@v2
-    - name: Publish to ghcr
-      uses: elgohr/Publish-Docker-Github-Action@master
-        with:
-          name: ${{ github.repository }}
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          dockerfile: quick-discord-bot/Dockerfile
+    - uses: actions/checkout@v4
+    - name: Publish to Registry
+      uses: elgohr/Publish-Docker-Github-Action@v4
+      with:
+        name: ${{ github.repository }}
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        dockerfile: quick-discord-bot/Dockerfile

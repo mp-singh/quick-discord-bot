@@ -33,4 +33,4 @@ jobs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
-        dockerfile: ${{ github.repository }}/Dockerfile
+        dockerfile: quick-discord-bot/Dockerfile

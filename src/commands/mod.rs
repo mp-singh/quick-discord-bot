@@ -1,5 +1,4 @@
 use std::fs;
-use std::sync::Arc;
 
 use image_conv::conv;
 use image_conv::{Filter, PaddingType};

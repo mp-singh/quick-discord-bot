@@ -35,3 +35,21 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         tags: latest
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    steps:
+    - name: Deploy
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.DAD_BOD_HOST }}
+        username: ${{ secrets.DAD_BOD_SSH_USERNAME }}
+        password: ${{ secrets.DAD_BOD_SSH_PASS }}
+        port: ${{ secrets.DAD_BOD_SSH_PORT }}
+        script: |
+          echo "Stopping old conatiner...." && docker stop $(docker ps -a | grep dad-bod | awk '{print $1}');
+          echo "removing conatiner..." && docker rm dad-bod;
+          echo "starting up new conatiner..." && docker run -d --pull always -e DISCORD_TOKEN=$DISCORD_TOKEN --name dad-bod ghcr.io/mp-singh/quick-discord-bot:latest;
+
+

@@ -27,7 +27,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
     - uses: actions/checkout@v2
-    - name: Publish to Registry
+    - name: Build and Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
         name: ${{ github.repository }}
@@ -48,8 +48,9 @@ jobs:
         password: ${{ secrets.DAD_BOD_SSH_PASS }}
         port: ${{ secrets.DAD_BOD_SSH_PORT }}
         script: |
-          echo "Stopping old conatiner...." && docker stop $(docker ps -a | grep dad-bod | awk '{print $1}');
-          echo "removing conatiner..." && docker rm dad-bod;
-          echo "starting up new conatiner..." && docker run -d --pull always -e DISCORD_TOKEN=$DISCORD_TOKEN --name dad-bod ghcr.io/mp-singh/quick-discord-bot:latest;
+          docker login https://ghcr.io -u ${{ github.repository_owner }} -p ${{ secrets.GITHUB_TOKEN }}
+          docker stop $(docker ps -a | grep ${{ secrets.DAD_BOD_IMAGE_NAME }} | awk '{print $1}')
+          docker rm ${{ secrets.DAD_BOD_IMAGE_NAME }}
+          docker run -d --pull always -e DISCORD_TOKEN=$DISCORD_TOKEN --name ${{ secrets.DAD_BOD_IMAGE_NAME }} ghcr.io/${{ github.repository }}:latest
 
 

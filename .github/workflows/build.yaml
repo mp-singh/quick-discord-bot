@@ -45,7 +45,7 @@ jobs:
       with:
         host: ${{ secrets.DAD_BOD_HOST }}
         username: ${{ secrets.DAD_BOD_SSH_USERNAME }}
-        password: ${{ secrets.DAD_BOD_SSH_PASS }}
+        key: ${{ secrets.DAD_BOD_SSH_KEY }}
         port: ${{ secrets.DAD_BOD_SSH_PORT }}
         script: |
           docker login https://ghcr.io -u ${{ github.repository_owner }} -p ${{ secrets.GITHUB_TOKEN }}

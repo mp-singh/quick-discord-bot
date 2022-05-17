@@ -13,7 +13,7 @@ use serenity::model::interactions::message_component::ButtonStyle;
 use serenity::utils::Content;
 use serenity::utils::ContentModifier::Spoiler;
 
-use crate::{REGEX_DICE, REQESUT, TRANSFORMATION_TYPES};
+use crate::{NASA_API_KEY, REGEX_DICE, REQESUT, TRANSFORMATION_TYPES};
 
 use crate::models::*;
 
@@ -486,6 +486,35 @@ async fn xkcd(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
                     })
                 });
                 c
+            });
+            message
+        })
+        .await?;
+
+    Ok(())
+}
+
+#[command]
+#[usage(": ~nasa")]
+#[description("Displays a random image from NASA's Astronomy Picture of the Day")]
+async fn nasa(ctx: &Context, msg: &Message) -> CommandResult {
+    let pic = REQESUT
+        .get(format!(
+            "https://api.nasa.gov/planetary/apod?api_key={}",
+            NASA_API_KEY.as_str()
+        ))
+        .send()
+        .await?
+        .json::<NASAPicOfTheDay>()
+        .await?;
+
+    msg.channel_id
+        .send_message(ctx, |message| {
+            message.embed(|embed| {
+                embed.title(pic.title);
+                embed.image(pic.url.as_str());
+                embed.footer(|f| f.text(format!("© {}", &pic.copyright)));
+                embed
             });
             message
         })

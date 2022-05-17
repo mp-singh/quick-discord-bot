@@ -21,6 +21,7 @@ lazy_static! {
         .redirect(redirect::Policy::none())
         .build()
         .unwrap();
+    static ref NASA_API_KEY: String = env::var("NASA_API_KEY").unwrap();
     static ref REGEX_DICE: Regex = Regex::new(r"^([1-9][0-9]?|100)[Dd]([1-9]\d*)$").unwrap();
     static ref HARDLY: Regex = Regex::new(r"(\w{2,}(?:[aeiou]r|re))(?:\W|$)").unwrap();
     static ref MOVIE1: Regex = Regex::new(r"<([a-zA-Z]+)([0-9]+)?>").unwrap();
@@ -85,7 +86,8 @@ use serenity::prelude::GatewayIntents;
     face,
     now,
     movie,
-    xkcd
+    xkcd,
+    nasa
 )]
 struct General;
 
@@ -131,7 +133,7 @@ async fn main() {
         .configure(|c| c.prefix("~"))
         .help(&MY_HELP) // set the bot's prefix to "~"
         .group(&GENERAL_GROUP);
-
+        
     let token = env::var("DISCORD_TOKEN").expect("token");
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES

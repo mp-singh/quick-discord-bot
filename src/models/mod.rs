@@ -54,3 +54,12 @@ pub struct XkcdComic {
     pub alt: String,
     pub img: String,
 }
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct NASAPicOfTheDay {
+    pub copyright: String,
+    pub date: String,
+    pub explanation: String,
+    pub title: String,
+    pub url: String,
+}

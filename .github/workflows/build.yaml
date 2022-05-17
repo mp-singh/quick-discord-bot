@@ -51,6 +51,6 @@ jobs:
           docker login https://ghcr.io -u ${{ github.repository_owner }} -p ${{ secrets.GITHUB_TOKEN }}
           docker stop $(docker ps -a | grep ${{ secrets.DAD_BOD_IMAGE_NAME }} | awk '{print $1}')
           docker rm ${{ secrets.DAD_BOD_IMAGE_NAME }}
-          docker run -d --pull always -e DISCORD_TOKEN --name ${{ secrets.DAD_BOD_IMAGE_NAME }} ghcr.io/${{ github.repository }}:latest
+          docker run -d --pull always -e DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }} --name ${{ secrets.DAD_BOD_IMAGE_NAME }} ghcr.io/${{ github.repository }}:latest
 
 

@@ -133,7 +133,7 @@ async fn main() {
         .configure(|c| c.prefix("~"))
         .help(&MY_HELP) // set the bot's prefix to "~"
         .group(&GENERAL_GROUP);
-        
+
     let token = env::var("DISCORD_TOKEN").expect("token");
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES

@@ -1,70 +1,30 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 use std::env;
 
-use maplit::{hashmap, hashset};
-use reqwest::redirect;
+use commands::witty::{shirley, thanks};
 use serenity::async_trait;
 use serenity::client::{Client, Context, EventHandler};
-
-use lazy_static::lazy_static;
-use quick_discord_bot::read_dir;
-use regex::Regex;
-use serenity::framework::standard::macros::help;
-use serenity::framework::standard::{help_commands, Args, CommandGroup, HelpOptions};
-use serenity::framework::standard::{macros::group, CommandResult, StandardFramework};
-use serenity::model::channel::Message;
-use serenity::model::id::UserId;
-use serenity::model::prelude::Ready;
-
-lazy_static! {
-    static ref REQESUT: reqwest::Client = reqwest::Client::builder()
-        .redirect(redirect::Policy::none())
-        .build()
-        .unwrap();
-    static ref NASA_API_KEY: String = env::var("NASA_API_KEY").unwrap();
-    static ref REGEX_DICE: Regex = Regex::new(r"^([1-9][0-9]?|100)[Dd]([1-9]\d*)$").unwrap();
-    static ref HARDLY: Regex = Regex::new(r"(\w{2,}(?:[aeiou]r|re))(?:\W|$)").unwrap();
-    static ref MOVIE1: Regex = Regex::new(r"<([a-zA-Z]+)([0-9]+)?>").unwrap();
-    static ref MOVIE_SYNOPSIS1: Regex = Regex::new(r"a\s([aeiou])").unwrap();
-    static ref MOVIE_SYNOPSIS2: Regex = Regex::new(r"([.?!]\s+)([a-z])").unwrap();
-    static ref MOVIE_CONTENTS: HashMap<String, Vec<String>> = read_dir(String::from("lists"));
-    static ref TRANSFORMATION_TYPES: HashMap<&'static str, Vec<f32>> = hashmap! {
-        "laplacian" => vec![0.0, 1.0, 0.0, 1.0, -4.0, 1.0, 0.0, 1.0, 0.0],
-        "sobel" => vec![-1.0, 0.0, 1.0, -2.0, 0.0, 2.0, -1.0, 0.0, 1.0],
-        "prewitt" => vec![-1.0, 0.0, 1.0, -1.0, 0.0, 1.0, -1.0, 0.0, 1.0],
-        "roberts" => vec![1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0],
-        "scharr" => vec![-3.0, 0.0, 3.0, -10.0, 0.0, 10.0, -3.0, 0.0, 3.0],
-        "laplacian_of_gaussian" => vec![0.0, 0.0, 1.0, 2.0, 1.0, 0.0, 0.0, 0.0, 0.0],
-        "gaussian" => vec![1.0, 2.0, 1.0, 2.0, 4.0, 2.0, 1.0, 2.0, 1.0],
-        "unsharp_mask" => vec![0.0, -1.0, 0.0, -1.0, 5.0, -1.0, 0.0, -1.0, 0.0],
-    };
-    static ref BLACK_LIST: HashSet<&'static str> = hashset![
-        "another",
-        "other",
-        "tenor",
-        "before",
-        "never",
-        "over",
-        "youre",
-        "fairer",
-        "after",
-        "everywhere",
-        "ever",
-        "hardware",
-        "software",
-        "anywhere",
-        "super",
-        "order"
-    ];
-}
+use serenity::framework::standard::{
+    help_commands, macros::group, macros::help, Args, CommandGroup, CommandResult, HelpOptions,
+    StandardFramework,
+};
+use serenity::model::{
+    application::command::Command,
+    channel::Message,
+    id::UserId,
+    prelude::{
+        interaction::Interaction::{self, ApplicationCommand},
+        GatewayIntents, Ready,
+    },
+};
 
 mod commands;
-mod handlers;
+mod lazy_statics;
 mod models;
+mod utils;
 
+use crate::tilde::*;
 use commands::*;
-use handlers::*;
-use serenity::prelude::GatewayIntents;
 
 #[group]
 #[commands(
@@ -108,6 +68,27 @@ struct Handler;
 
 #[async_trait]
 impl EventHandler for Handler {
+    async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
+        if let ApplicationCommand(command) = interaction {
+            match command.data.name.as_str() {
+                "ping" => commands::slash::ping::run(&ctx, &command).await,
+                _ => {}
+            };
+        }
+    }
+
+    async fn ready(&self, ctx: Context, ready: Ready) {
+        if let Err(e) = Command::set_global_application_commands(&ctx.http, |commands| {
+            commands.create_application_command(|command| slash::ping::register(command))
+        })
+        .await
+        {
+            println!("unable to register slash commands: {:?}", e)
+        }
+
+        println!("{} is connected!", ready.user.name);
+    }
+
     async fn message(&self, ctx: Context, msg: Message) {
         if !msg.author.bot {
             if let Some(thanks) = thanks(&msg) {
@@ -120,10 +101,6 @@ impl EventHandler for Handler {
                 let _ = msg.channel_id.say(&ctx.http, shirley).await;
             }
         }
-    }
-
-    async fn ready(&self, _: Context, ready: Ready) {
-        println!("{} is connected!", ready.user.name);
     }
 }
 

@@ -1,7 +1,11 @@
-use crate::{BLACK_LIST, HARDLY};
-use quick_discord_bot::count_syllables;
 use serenity::{model::channel::Message, prelude::Mentionable};
 
+use crate::{
+    lazy_statics::{BLACK_LIST, HARDLY},
+    utils::syllables::count_syllables,
+};
+
+#[allow(dead_code)]
 pub fn hardly(msg: &str) -> Option<String> {
     for cap in HARDLY.captures_iter(msg) {
         let word = cap.get(1).unwrap().as_str();

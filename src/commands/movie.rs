@@ -2,8 +2,10 @@ use rand::prelude::*;
 use std::collections::HashMap;
 use titlecase::titlecase;
 
-use crate::models::*;
-use crate::{MOVIE1, MOVIE_CONTENTS, MOVIE_SYNOPSIS1, MOVIE_SYNOPSIS2};
+use crate::{
+    lazy_statics::{MOVIE1, MOVIE_CONTENTS, MOVIE_SYNOPSIS1, MOVIE_SYNOPSIS2},
+    models::*,
+};
 
 fn pick(template: String, picked: &mut HashMap<String, Vec<String>>) -> String {
     let v = MOVIE_CONTENTS.get(&template).unwrap();

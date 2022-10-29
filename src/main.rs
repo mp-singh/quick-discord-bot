@@ -1,8 +1,9 @@
-use openapi::*;
 use std::collections::HashSet;
 use std::env;
 
+use clients::digital_ocean::{DigitalOcean, DigitalOceanClientBuiler};
 use commands::witty::{shirley, thanks};
+use lazy_statics::REQUEST;
 use serenity::async_trait;
 use serenity::client::{Client, Context, EventHandler};
 use serenity::framework::standard::{
@@ -19,6 +20,7 @@ use serenity::model::{
     },
 };
 
+mod clients;
 mod commands;
 mod lazy_statics;
 mod models;
@@ -128,10 +130,8 @@ async fn main() {
     if let Err(why) = client.start().await {
         println!("An error occurred while running the client: {:?}", why);
     }
+    let _do_client = DigitalOceanClientBuiler::new()
+        .token("MY_AWSOME_TOKEN".to_string())
+        .build();
+    // do_client
 }
-
-// fn setup_digital_ocean() {
-//     let configuration = Configuration {
-
-//     };
-// }

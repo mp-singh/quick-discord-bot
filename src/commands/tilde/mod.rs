@@ -9,7 +9,7 @@ use serenity::model::{application::component::ButtonStyle, channel::Message};
 use serenity::utils::{Content, ContentModifier::Spoiler};
 
 use crate::commands::movie;
-use crate::lazy_statics::{NASA_API_KEY, REGEX_DICE, REQESUT, TRANSFORMATION_TYPES};
+use crate::lazy_statics::{NASA_API_KEY, REGEX_DICE, REQUEST, TRANSFORMATION_TYPES};
 
 use crate::models::*;
 
@@ -23,7 +23,7 @@ pub async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
 #[description("Get the IP address of the bot")]
 #[help_available(false)]
 pub async fn ip(ctx: &Context, msg: &Message) -> CommandResult {
-    let ip = REQESUT
+    let ip = REQUEST
         .get("https://api.ipify.org")
         .send()
         .await?
@@ -38,7 +38,7 @@ pub async fn ip(ctx: &Context, msg: &Message) -> CommandResult {
 #[example(": ~joke")]
 #[description("Get a random joke")]
 pub async fn joke(ctx: &Context, msg: &Message) -> CommandResult {
-    let joke = REQESUT
+    let joke = REQUEST
         .get("https://icanhazdadjoke.com/")
         .header("Accept", "text/plain")
         .send()
@@ -53,7 +53,7 @@ pub async fn joke(ctx: &Context, msg: &Message) -> CommandResult {
 #[example(": ~yomama")]
 #[description("Get a random yomama joke")]
 pub async fn yomama(ctx: &Context, msg: &Message) -> CommandResult {
-    let yomama = REQESUT
+    let yomama = REQUEST
         .get("https://api.yomomma.info/")
         .header("Accept", "text/plain")
         .send()
@@ -68,7 +68,7 @@ pub async fn yomama(ctx: &Context, msg: &Message) -> CommandResult {
 #[usage(": ~trivia")]
 #[description("Get a random trivia question")]
 pub async fn trivia(ctx: &Context, msg: &Message) -> CommandResult {
-    let trivia = REQESUT
+    let trivia = REQUEST
         .get("https://opentdb.com/api.php?amount=1")
         .header("Accept", "application/json; charset=utf-8")
         .send()
@@ -98,7 +98,7 @@ pub async fn trivia(ctx: &Context, msg: &Message) -> CommandResult {
 #[usage(": ~excuse")]
 #[description("Generate a random excuse why dev work isn't complete!")]
 pub async fn excuse(ctx: &Context, msg: &Message) -> CommandResult {
-    let excuse = REQESUT
+    let excuse = REQUEST
         .get("https://api.devexcus.es")
         .send()
         .await?
@@ -116,7 +116,7 @@ pub async fn excuse(ctx: &Context, msg: &Message) -> CommandResult {
 #[description("Get your daily Chuck Norris fact!")]
 #[aliases("chuck", "chucknorris")]
 pub async fn chuck_norris(ctx: &Context, msg: &Message) -> CommandResult {
-    let chuck_norris = REQESUT
+    let chuck_norris = REQUEST
         .get("https://api.chucknorris.io/jokes/random")
         .send()
         .await?
@@ -267,7 +267,7 @@ pub async fn roll(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
 #[usage(": ~trump")]
 #[description("Generate a random, completely factual, Donald Trump quote.")]
 pub async fn trump(ctx: &Context, msg: &Message) -> CommandResult {
-    let trump = REQESUT
+    let trump = REQUEST
         .get("https://api.whatdoestrumpthink.com/api/v1/quotes/random")
         .send()
         .await?
@@ -283,7 +283,7 @@ pub async fn trump(ctx: &Context, msg: &Message) -> CommandResult {
 #[min_args(1)]
 #[description("Translate english into something piratey could say in a drunken pirate voice.")]
 pub async fn pirate(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
-    let translated = REQESUT
+    let translated = REQUEST
         .get("https://pirate.monkeyness.com/api/translate")
         .query(&[("english", args.message().to_string())])
         .header("Accept", "text/plain")
@@ -316,7 +316,7 @@ pub async fn cv(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
         }
     };
 
-    let api_image = REQESUT
+    let api_image = REQUEST
         .get(&msg.attachments.first().unwrap().url)
         .send()
         .await?
@@ -356,7 +356,7 @@ pub async fn cv(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
 #[usage(": ~lucky")]
 #[description("Links to Googles im feeling lucky link when you search for something")]
 pub async fn lucky(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
-    let response = REQESUT
+    let response = REQUEST
         .get("https://www.google.com/search")
         .query(&[
             ("q", args.message().to_string()),
@@ -407,7 +407,7 @@ pub async fn movie(ctx: &Context, msg: &Message) -> CommandResult {
     "Get an xkcd comic. If you provide an invalid comic number, you will get a latest comic."
 )]
 async fn xkcd(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
-    let latest = REQESUT
+    let latest = REQUEST
         .get("https://xkcd.com/info.0.json")
         .send()
         .await?
@@ -420,7 +420,7 @@ async fn xkcd(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
 
     comic_num = args.single::<u16>().unwrap_or(comic_num);
     let xkcd_url = format!("https://xkcd.com/{}/info.0.json", comic_num);
-    let response = REQESUT.get(xkcd_url).send().await?;
+    let response = REQUEST.get(xkcd_url).send().await?;
 
     if response.status() == 404 {
         msg.reply(ctx, "Please provide a valid xkcd comic ID!")
@@ -472,7 +472,7 @@ async fn xkcd(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
 #[usage(": ~nasa")]
 #[description("Displays a random image from NASA's Astronomy Picture of the Day")]
 async fn nasa(ctx: &Context, msg: &Message) -> CommandResult {
-    let pic = REQESUT
+    let pic = REQUEST
         .get(format!(
             "https://api.nasa.gov/planetary/apod?api_key={}",
             NASA_API_KEY.as_str()

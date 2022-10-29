@@ -1,8 +1,10 @@
 pub mod event;
 use serenity::{
     model::prelude::{
-        application_command::{ApplicationCommandInteraction, CommandDataOption},
-        InteractionResponseType, RoleId,
+        interaction::{
+            application_command::ApplicationCommandInteraction, InteractionResponseType,
+        },
+        RoleId,
     },
     prelude::Context,
 };

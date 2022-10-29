@@ -15,6 +15,11 @@ lazy_static! {
         .redirect(redirect::Policy::none())
         .build()
         .unwrap();
+    pub static ref DO_CONFIGURATION: Configuration {
+        bearer_access_token: env::var("DO_TOKEN").expect("token"),
+        client: REQESUT
+        ..Default::default()
+    };
     pub static ref NASA_API_KEY: String = env::var("NASA_API_KEY").unwrap();
     pub static ref REGEX_DICE: Regex = Regex::new(r"^([1-9][0-9]?|100)[Dd]([1-9]\d*)$").unwrap();
     pub static ref HARDLY: Regex = Regex::new(r"(\w{2,}(?:[aeiou]r|re))(?:\W|$)").unwrap();

@@ -1,3 +1,4 @@
+use openapi::*;
 use std::collections::HashSet;
 use std::env;
 
@@ -72,6 +73,7 @@ impl EventHandler for Handler {
         if let ApplicationCommand(command) = interaction {
             match command.data.name.as_str() {
                 "ping" => commands::slash::ping::run(&ctx, &command).await,
+                "kf2" => commands::slash::events::event::run(&ctx, &command).await,
                 _ => {}
             };
         }
@@ -79,7 +81,9 @@ impl EventHandler for Handler {
 
     async fn ready(&self, ctx: Context, ready: Ready) {
         if let Err(e) = Command::set_global_application_commands(&ctx.http, |commands| {
-            commands.create_application_command(|command| slash::ping::register(command))
+            commands
+                .create_application_command(|command| slash::ping::register(command))
+                .create_application_command(|command| slash::events::event::register(command))
         })
         .await
         {
@@ -125,3 +129,9 @@ async fn main() {
         println!("An error occurred while running the client: {:?}", why);
     }
 }
+
+// fn setup_digital_ocean() {
+//     let configuration = Configuration {
+
+//     };
+// }

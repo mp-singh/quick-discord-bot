@@ -100,9 +100,6 @@ impl EventHandler for Handler {
             if let Some(thanks) = thanks(&msg) {
                 let _ = msg.channel_id.say(&ctx.http, thanks).await;
             }
-            // if let Some(hardly) = hardly(&msg.content) {
-            //     let _ = msg.channel_id.say(&ctx.http, hardly).await;
-            // }
             if let Some(shirley) = shirley(&msg.content) {
                 let _ = msg.channel_id.say(&ctx.http, shirley).await;
             }
@@ -130,8 +127,7 @@ async fn main() {
     if let Err(why) = client.start().await {
         println!("An error occurred while running the client: {:?}", why);
     }
-    let _do_client = DigitalOceanClientBuiler::new()
+    let do_client = DigitalOceanClientBuiler::new()
         .token("MY_AWSOME_TOKEN".to_string())
         .build();
-    // do_client
 }

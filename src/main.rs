@@ -72,10 +72,14 @@ struct Handler;
 #[async_trait]
 impl EventHandler for Handler {
     async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
+        let do_client = DigitalOceanClientBuiler::new()
+            .token("MY_AWSOME_TOKEN".to_string())
+            .build();
+
         if let ApplicationCommand(command) = interaction {
             match command.data.name.as_str() {
                 "ping" => commands::slash::ping::run(&ctx, &command).await,
-                "kf2" => commands::slash::events::event::run(&ctx, &command).await,
+                "kf2" => commands::slash::events::event::run(&ctx, &command, &do_client).await,
                 _ => {}
             };
         }
@@ -111,10 +115,11 @@ impl EventHandler for Handler {
 async fn main() {
     let framework = StandardFramework::new()
         .configure(|c| c.prefix("~"))
-        .help(&MY_HELP) // set the bot's prefix to "~"
+        .help(&MY_HELP)
         .group(&GENERAL_GROUP);
 
-    let token = env::var("DISCORD_TOKEN").expect("token");
+    // let token = env::var("DISCORD_TOKEN").expect("token");
+    let token = "OTUzNzYyMDM4OTczMzYyMjM3.GmBWtU.6ia6yrd0MrfwfPUyGoDvv4_rrDmEsqi0G9SX2I";
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES
         | GatewayIntents::MESSAGE_CONTENT;
@@ -127,7 +132,4 @@ async fn main() {
     if let Err(why) = client.start().await {
         println!("An error occurred while running the client: {:?}", why);
     }
-    let do_client = DigitalOceanClientBuiler::new()
-        .token("MY_AWSOME_TOKEN".to_string())
-        .build();
 }

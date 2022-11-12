@@ -6,6 +6,8 @@ use serenity::{
     prelude::Context,
 };
 
+use crate::clients::digital_ocean::DigitalOcean;
+
 pub async fn run(ctx: &Context, command: &ApplicationCommandInteraction) {
     if let Err(e) = command
         .create_interaction_response(&ctx.http, |resp| {

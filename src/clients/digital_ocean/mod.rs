@@ -7,7 +7,7 @@ use crate::lazy_statics::DO_TOKEN;
 
 use self::models::droplet::{Droplet, DropletCreate};
 
-mod models;
+pub mod models;
 
 #[derive(Debug)]
 pub struct DigitalOcean {

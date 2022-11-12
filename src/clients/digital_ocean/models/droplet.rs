@@ -5,13 +5,13 @@ use super::{image::Image, networks::Networks, region::Region};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct DropletCreate {
-    name: String,
-    region: String,
-    size: String,
-    image: Image,
-    tags: Vec<String>,
-    ssh_key: Option<Vec<String>>,
-    backup: Option<bool>,
+    pub name: String,
+    pub region: String,
+    pub size: String,
+    pub image: String,
+    pub tags: Vec<String>,
+    pub ssh_key: Option<Vec<String>>,
+    pub backup: Option<bool>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]

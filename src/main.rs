@@ -118,8 +118,7 @@ async fn main() {
         .help(&MY_HELP)
         .group(&GENERAL_GROUP);
 
-    // let token = env::var("DISCORD_TOKEN").expect("token");
-    let token = "OTUzNzYyMDM4OTczMzYyMjM3.GmBWtU.6ia6yrd0MrfwfPUyGoDvv4_rrDmEsqi0G9SX2I";
+    let token = env::var("DISCORD_TOKEN").expect("token");
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES
         | GatewayIntents::MESSAGE_CONTENT;

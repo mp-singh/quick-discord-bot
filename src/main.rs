@@ -1,9 +1,8 @@
 use std::collections::HashSet;
 use std::env;
 
-use clients::digital_ocean::{DigitalOcean, DigitalOceanClientBuiler};
+use clients::digital_ocean::DigitalOceanClientBuiler;
 use commands::witty::{shirley, thanks};
-use lazy_statics::REQUEST;
 use serenity::async_trait;
 use serenity::client::{Client, Context, EventHandler};
 use serenity::framework::standard::{
@@ -79,7 +78,7 @@ impl EventHandler for Handler {
         if let ApplicationCommand(command) = interaction {
             match command.data.name.as_str() {
                 "ping" => commands::slash::ping::run(&ctx, &command).await,
-                "kf2" => commands::slash::events::event::run(&ctx, &command, &do_client).await,
+                "kf2" => commands::slash::events::kf2::run(&ctx, &command, &do_client).await,
                 _ => {}
             };
         }
@@ -89,7 +88,7 @@ impl EventHandler for Handler {
         if let Err(e) = Command::set_global_application_commands(&ctx.http, |commands| {
             commands
                 .create_application_command(|command| slash::ping::register(command))
-                .create_application_command(|command| slash::events::event::register(command))
+                .create_application_command(|command| slash::events::kf2::register(command))
         })
         .await
         {

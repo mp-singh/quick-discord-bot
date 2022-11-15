@@ -1,4 +1,3 @@
-pub mod event;
 use serenity::{
     model::prelude::{
         interaction::{
@@ -8,6 +7,8 @@ use serenity::{
     },
     prelude::Context,
 };
+
+pub mod kf2;
 
 pub async fn requires_role(
     user_role: RoleId,

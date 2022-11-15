@@ -1,23 +1,13 @@
+use crate::utils::interactions::Interaction;
 use serenity::{
     builder::CreateApplicationCommand,
-    model::prelude::interaction::{
-        application_command::ApplicationCommandInteraction, InteractionResponseType,
-    },
+    model::prelude::interaction::application_command::ApplicationCommandInteraction,
     prelude::Context,
 };
 
-use crate::clients::digital_ocean::DigitalOcean;
-
 pub async fn run(ctx: &Context, command: &ApplicationCommandInteraction) {
-    if let Err(e) = command
-        .create_interaction_response(&ctx.http, |resp| {
-            resp.kind(InteractionResponseType::ChannelMessageWithSource)
-                .interaction_response_data(|msg| msg.content("Pong baby!"))
-        })
-        .await
-    {
-        println!("unable to respond to slash command: {}", e)
-    }
+    let mut interaction = Interaction::new(ctx, command);
+    interaction.reply("Pong Baby!").await;
 }
 
 pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {

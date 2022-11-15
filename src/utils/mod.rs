@@ -5,6 +5,7 @@ use std::{
     path::Path,
 };
 
+pub mod interactions;
 pub mod syllables;
 
 pub fn read_dir(dir: String) -> HashMap<String, Vec<String>> {

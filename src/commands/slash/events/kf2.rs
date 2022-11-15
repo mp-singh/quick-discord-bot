@@ -80,16 +80,16 @@ pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicatio
 }
 
 pub async fn run(ctx: &Context, command: &ApplicationCommandInteraction, do_client: &DigitalOcean) {
-    // if !super::requires_role(
-    //     RoleId(1035710963070013540),
-    //     &command.member.as_ref().unwrap().roles,
-    //     ctx,
-    //     command,
-    // )
-    // .await
-    // {
-    //     return;
-    // }
+    if !super::requires_role(
+        RoleId(1035710963070013540),
+        &command.member.as_ref().unwrap().roles,
+        ctx,
+        command,
+    )
+    .await
+    {
+        return;
+    }
 
     let sub_command = command.data.options.first().unwrap();
     if sub_command.kind == CommandOptionType::SubCommand {

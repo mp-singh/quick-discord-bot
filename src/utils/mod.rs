@@ -6,6 +6,7 @@ use std::{
 };
 
 pub mod interactions;
+pub mod optl;
 pub mod syllables;
 
 pub fn read_dir(dir: String) -> HashMap<String, Vec<String>> {

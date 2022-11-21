@@ -112,6 +112,8 @@ impl EventHandler for Handler {
 
 #[tokio::main]
 async fn main() {
+    utils::optl::setup_optl();
+
     let framework = StandardFramework::new()
         .configure(|c| c.prefix("~"))
         .help(&MY_HELP)

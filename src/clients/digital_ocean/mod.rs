@@ -16,6 +16,7 @@ pub struct DigitalOcean {
 }
 
 impl DigitalOcean {
+    #[allow(dead_code)]
     pub fn builder() -> DigitalOceanClientBuiler {
         DigitalOceanClientBuiler::default()
     }
@@ -27,7 +28,7 @@ impl DigitalOcean {
                 reqwest::Method::POST,
                 reqwest::Url::from_str("https://api.digitalocean.com/v2/droplets").unwrap(),
             )
-            .bearer_auth(DO_TOKEN.as_str())
+            .bearer_auth(self.token.as_str())
             .json(&new)
             .send()
             .await
@@ -45,7 +46,7 @@ impl DigitalOcean {
                 reqwest::Url::from_str("https://api.digitalocean.com/v2/droplets").unwrap(),
             )
             .query(&[("tag_name", name)])
-            .bearer_auth(DO_TOKEN.as_str())
+            .bearer_auth(self.token.as_str())
             .send()
             .await;
 
@@ -71,7 +72,7 @@ impl DigitalOcean {
                 reqwest::Url::from_str("https://api.digitalocean.com/v2/droplets").unwrap(),
             )
             .query(&[("tag_name", name)])
-            .bearer_auth(DO_TOKEN.as_str())
+            .bearer_auth(self.token.as_str())
             .send()
             .await
             .unwrap()
@@ -94,17 +95,12 @@ impl DigitalOceanClientBuiler {
                 .redirect(redirect::Policy::none())
                 .build()
                 .unwrap(),
-            ..Default::default()
+            token: DO_TOKEN.to_string(),
         }
     }
 
     pub fn token(mut self, token: String) -> DigitalOceanClientBuiler {
         self.token = token;
-        self
-    }
-
-    pub fn client(mut self, client: reqwest::Client) -> DigitalOceanClientBuiler {
-        self.client = client;
         self
     }
 

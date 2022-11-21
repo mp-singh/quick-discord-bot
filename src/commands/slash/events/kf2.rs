@@ -2,11 +2,7 @@ use serenity::{
     builder::CreateApplicationCommand,
     model::prelude::{
         command::CommandOptionType,
-        interaction::{
-            self,
-            application_command::{ApplicationCommandInteraction, CommandDataOption},
-            InteractionResponseType,
-        },
+        interaction::application_command::{ApplicationCommandInteraction, CommandDataOption},
         RoleId,
     },
     prelude::Context,
@@ -14,10 +10,7 @@ use serenity::{
 use std::str::FromStr;
 
 use crate::{
-    clients::digital_ocean::{
-        models::droplet::{Droplet, DropletCreate},
-        DigitalOcean,
-    },
+    clients::digital_ocean::{models::droplet::DropletCreate, DigitalOcean},
     commands::slash::SubCommand,
     utils::interactions::Interaction,
 };
@@ -97,9 +90,10 @@ pub async fn run(ctx: &Context, command: &ApplicationCommandInteraction, do_clie
             SubCommand::Provision => {
                 provison_new(ctx, command, &sub_command.options, do_client).await
             }
-            SubCommand::UnProvision => un_provision(ctx, command, &sub_command.options).await,
+            SubCommand::UnProvision => {
+                un_provision(ctx, command, &sub_command.options, do_client).await
+            }
             SubCommand::List => list_all(ctx, command, &sub_command.options, do_client).await,
-            _ => unreachable!(),
         }
     }
 }
@@ -130,8 +124,6 @@ async fn provison_new(
         .as_str()
         .unwrap();
 
-    //TODO:: create droplet with tag kf2
-
     let new = DropletCreate {
         name: "kf2.server".to_owned(),
         region: region.to_string(),
@@ -141,34 +133,65 @@ async fn provison_new(
         ssh_key: None,
         backup: None,
     };
-
     let mut interaction = Interaction::new(ctx, command);
-    interaction.reply("Provison Request Sent!").await;
-
-    // do_client.create_droplet(new);
+    match do_client.create_droplet(new).await {
+        Ok(droplet) => {
+            interaction
+                .reply(format!(
+                    "Provison request created: {} - {}",
+                    droplet.name, droplet.networks.v4[0].ip_address
+                ))
+                .await;
+        }
+        Err(_) => {
+            interaction
+                .reply("Failed to send a provision request".to_string())
+                .await;
+        }
+    };
 }
 
 async fn un_provision(
     ctx: &Context,
     command: &ApplicationCommandInteraction,
     options: &[CommandDataOption],
+    do_client: &DigitalOcean,
 ) {
     let mut interaction = Interaction::new(ctx, command);
-    interaction.reply("Unprovisioning KF2 Server").await;
+    let name = options
+        .iter()
+        .find(|opt| opt.name == "name")
+        .unwrap()
+        .value
+        .as_ref()
+        .unwrap()
+        .as_str()
+        .unwrap();
+
+    match do_client.delete_droplet(name).await {
+        Ok(_) => {
+            interaction.reply(format!("Droplet {} deleted", name)).await;
+        }
+        Err(_) => {
+            interaction
+                .reply(format!("Failed to delete droplet {}", name))
+                .await;
+        }
+    }
 }
 
 async fn list_all(
     ctx: &Context,
     command: &ApplicationCommandInteraction,
-    options: &[CommandDataOption],
+    _options: &[CommandDataOption],
     do_client: &DigitalOcean,
 ) {
     let mut interaction = Interaction::new(ctx, command);
     match do_client.list_droplets_by_tag_name("kf2").await {
         Ok(droplets) => {
-            let mut msg = String::new();
+            let mut msg = "***Droplets***\n".to_string();
             for droplet in droplets {
-                msg.push_str(&format!("{}: {}", droplet.id, droplet.name));
+                msg.push_str(&format!("{}: {}\n", droplet.id, droplet.name));
             }
             interaction.reply(&msg).await;
         }

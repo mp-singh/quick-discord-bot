@@ -34,6 +34,7 @@ impl fmt::Display for SubCommand {
 }
 
 mod tests {
+    #[allow(unused_imports)]
     use super::*;
 
     #[test]

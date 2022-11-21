@@ -1,12 +1,9 @@
 use serenity::{
-    model::prelude::{
-        interaction::{
-            application_command::ApplicationCommandInteraction, InteractionResponseType,
-        },
-        RoleId,
-    },
+    model::prelude::{interaction::application_command::ApplicationCommandInteraction, RoleId},
     prelude::Context,
 };
+
+use crate::utils::interactions::Interaction;
 
 pub mod kf2;
 
@@ -17,17 +14,20 @@ pub async fn requires_role(
     command: &ApplicationCommandInteraction,
 ) -> bool {
     let found = all_roles.iter().any(|role| *role == user_role);
+    let mut interaction = Interaction::new(ctx, command);
+
     if !found {
-        command
-            .create_interaction_response(&ctx, |r| {
-                r.kind(InteractionResponseType::ChannelMessageWithSource)
-                    .interaction_response_data(|m| {
-                        m.content("You do not have permission to use this command")
-                            .ephemeral(true)
-                    })
-            })
-            .await
-            .unwrap();
+        interaction
+            .reply("You do not have permission to use this command.")
+            .await;
     }
     found
+}
+
+mod test {
+
+    #[test]
+    fn test_requires_role() {
+        assert!(true);
+    }
 }

@@ -33,7 +33,7 @@ fn populate_template(tmpl: String, picked: &mut HashMap<String, Vec<String>>) ->
                         return found.clone();
                     }
                 }
-                return pick(tmpl, picked);
+                pick(tmpl, picked)
             })
             .to_mut()
             .clone();

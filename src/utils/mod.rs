@@ -5,6 +5,8 @@ use std::{
     path::Path,
 };
 
+pub mod interactions;
+pub mod optl;
 pub mod syllables;
 
 pub fn read_dir(dir: String) -> HashMap<String, Vec<String>> {
@@ -33,4 +35,30 @@ where
 {
     let file = File::open(filename)?;
     Ok(io::BufReader::new(file).lines())
+}
+
+mod test {
+    #[allow(unused_imports)]
+    use super::*;
+    #[allow(unused_imports)]
+    use std::io::Write;
+
+    #[test]
+    fn test_read_dir() {
+        let dir = "test_dir";
+        fs::create_dir_all(dir).unwrap();
+        let mut map: HashMap<String, Vec<String>> = HashMap::new();
+        map.insert("test1".to_string(), vec!["test1".to_string()]);
+        map.insert("test2".to_string(), vec!["test2".to_string()]);
+        map.insert("test3".to_string(), vec!["test3".to_string()]);
+        for (key, value) in map.iter() {
+            let mut file = File::create(format!("{}/{}.txt", dir, key)).unwrap();
+            for line in value {
+                writeln!(file, "{}", line).unwrap();
+            }
+        }
+        let result = read_dir(dir.to_string());
+        assert_eq!(result, map);
+        fs::remove_dir_all(dir).unwrap();
+    }
 }

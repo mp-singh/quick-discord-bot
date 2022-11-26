@@ -3,7 +3,6 @@ use serenity::{
     model::prelude::{
         command::CommandOptionType,
         interaction::application_command::{ApplicationCommandInteraction, CommandDataOption},
-        RoleId,
     },
     prelude::Context,
 };
@@ -12,7 +11,7 @@ use std::str::FromStr;
 use crate::{
     clients::digital_ocean::{models::droplet::DropletCreate, DigitalOcean},
     commands::slash::SubCommand,
-    utils::interactions::Interaction,
+    utils::interactions::{constants::KF2_ROLE_ID, Interaction},
 };
 
 pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {
@@ -74,7 +73,7 @@ pub fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicatio
 
 pub async fn run(ctx: &Context, command: &ApplicationCommandInteraction, do_client: &DigitalOcean) {
     if !super::requires_role(
-        RoleId(1035710963070013540),
+        KF2_ROLE_ID,
         &command.member.as_ref().unwrap().roles,
         ctx,
         command,
@@ -133,7 +132,7 @@ async fn provison_new(
         ssh_key: None,
         backup: None,
     };
-    let mut interaction = Interaction::new(ctx, command);
+    let mut interaction = Interaction::new(ctx, command, true);
     match do_client.create_droplet(new).await {
         Ok(droplet) => {
             interaction
@@ -157,7 +156,7 @@ async fn un_provision(
     options: &[CommandDataOption],
     do_client: &DigitalOcean,
 ) {
-    let mut interaction = Interaction::new(ctx, command);
+    let mut interaction = Interaction::new(ctx, command, true);
     let name = options
         .iter()
         .find(|opt| opt.name == "name")
@@ -186,7 +185,7 @@ async fn list_all(
     _options: &[CommandDataOption],
     do_client: &DigitalOcean,
 ) {
-    let mut interaction = Interaction::new(ctx, command);
+    let mut interaction = Interaction::new(ctx, command, true);
     match do_client.list_droplets_by_tag_name("kf2").await {
         Ok(droplets) => {
             let mut msg = "***Droplets***\n".to_string();

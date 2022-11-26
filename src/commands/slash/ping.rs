@@ -6,7 +6,7 @@ use serenity::{
 };
 
 pub async fn run(ctx: &Context, command: &ApplicationCommandInteraction) {
-    let mut interaction = Interaction::new(ctx, command);
+    let mut interaction = Interaction::new(ctx, command, false);
     interaction.reply("Pong Baby!").await;
 }
 

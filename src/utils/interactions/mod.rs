@@ -10,20 +10,28 @@ use serenity::{
     prelude::Context,
 };
 
+pub mod constants;
+
 pub struct Interaction<'a> {
     message: Option<Message>,
     interaction: &'a ApplicationCommandInteraction,
     ctx: &'a Context,
     initial_response: bool,
+    ephemeral: bool,
 }
 
 impl<'a> Interaction<'a> {
-    pub const fn new(ctx: &'a Context, interaction: &'a ApplicationCommandInteraction) -> Self {
+    pub const fn new(
+        ctx: &'a Context,
+        interaction: &'a ApplicationCommandInteraction,
+        ephemeral: bool,
+    ) -> Self {
         Self {
             message: None,
             interaction,
             ctx,
             initial_response: false,
+            ephemeral,
         }
     }
 
@@ -32,7 +40,7 @@ impl<'a> Interaction<'a> {
             self.interaction
                 .create_interaction_response(self.ctx, |r| {
                     r.kind(InteractionResponseType::DeferredChannelMessageWithSource)
-                        .interaction_response_data(|d| d.ephemeral(true))
+                        .interaction_response_data(|d| d.ephemeral(self.ephemeral))
                 })
                 .await
                 .unwrap();

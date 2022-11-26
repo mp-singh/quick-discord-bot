@@ -1,7 +1,7 @@
 use opentelemetry::sdk::export::trace::stdout;
 use tracing_subscriber::{prelude::__tracing_subscriber_SubscriberExt, Registry};
 
-pub fn setup_optl() {
+pub fn _setup_optl() {
     let tracer = stdout::new_pipeline().install_simple();
     let telemetry = tracing_opentelemetry::layer().with_tracer(tracer);
     let subscriber = Registry::default().with(telemetry);
@@ -22,7 +22,7 @@ mod test {
 
     #[test]
     fn test_requires_role() {
-        setup_optl();
+        _setup_optl();
         doing_work();
     }
 }

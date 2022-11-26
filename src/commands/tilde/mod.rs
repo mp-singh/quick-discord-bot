@@ -1,10 +1,14 @@
+use std::collections::HashSet;
 use std::fs;
 
 use image_conv::{conv, Filter, PaddingType};
 use photon_rs::native::{open_image_from_bytes, save_image};
 use rand::{prelude::SliceRandom, Rng};
 use serenity::client::Context;
+use serenity::framework::standard::macros::{group, help};
+use serenity::framework::standard::{help_commands, CommandGroup, HelpOptions};
 use serenity::framework::standard::{macros::command, Args, CommandResult};
+use serenity::model::prelude::UserId;
 use serenity::model::{application::component::ButtonStyle, channel::Message};
 use serenity::utils::{Content, ContentModifier::Spoiler};
 
@@ -12,6 +16,44 @@ use crate::commands::movie;
 use crate::lazy_statics::{NASA_API_KEY, REGEX_DICE, REQUEST, TRANSFORMATION_TYPES};
 
 use crate::models::*;
+
+#[group]
+#[commands(
+    ping,
+    ip,
+    joke,
+    yomama,
+    trivia,
+    excuse,
+    chuck_norris,
+    trump,
+    count,
+    flip,
+    roll,
+    haphazardly,
+    pirate,
+    cv,
+    lucky,
+    face,
+    now,
+    movie,
+    xkcd,
+    nasa
+)]
+pub struct General;
+
+#[help]
+pub async fn my_help(
+    context: &Context,
+    msg: &Message,
+    args: Args,
+    help_options: &'static HelpOptions,
+    groups: &[&'static CommandGroup],
+    owners: HashSet<UserId>,
+) -> CommandResult {
+    let _ = help_commands::with_embeds(context, msg, args, help_options, groups, owners).await;
+    Ok(())
+}
 
 #[command]
 pub async fn ping(ctx: &Context, msg: &Message) -> CommandResult {

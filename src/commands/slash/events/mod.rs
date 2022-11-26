@@ -14,7 +14,7 @@ pub async fn requires_role(
     command: &ApplicationCommandInteraction,
 ) -> bool {
     let found = all_roles.iter().any(|role| *role == user_role);
-    let mut interaction = Interaction::new(ctx, command);
+    let mut interaction = Interaction::new(ctx, command, true);
 
     if !found {
         interaction

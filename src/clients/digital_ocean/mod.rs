@@ -3,9 +3,9 @@ use std::str::FromStr;
 use reqwest::redirect;
 pub use reqwest::Client;
 
-use crate::lazy_statics::DO_TOKEN;
+use crate::{clients::digital_ocean::models::droplet::DropletListResponse, lazy_statics::DO_TOKEN};
 
-use self::models::droplet::{Droplet, DropletCreate};
+use self::models::droplet::{DropletCreate, DropletCreateResponse};
 
 pub mod models;
 
@@ -21,8 +21,10 @@ impl DigitalOcean {
         DigitalOceanClientBuiler::default()
     }
 
-    pub async fn create_droplet(&self, new: DropletCreate) -> Result<Droplet, String> {
-        println!("made it into create");
+    pub async fn create_droplet(
+        &self,
+        new: DropletCreate,
+    ) -> Result<DropletCreateResponse, String> {
         self.client
             .request(
                 reqwest::Method::POST,
@@ -33,7 +35,7 @@ impl DigitalOcean {
             .send()
             .await
             .unwrap()
-            .json::<Droplet>()
+            .json::<DropletCreateResponse>()
             .await
             .map_err(|e| format!("unable to make request to create droplet {:?}", e))
     }
@@ -65,7 +67,10 @@ impl DigitalOcean {
         }
     }
 
-    pub async fn list_droplets_by_tag_name(&self, name: &str) -> Result<Vec<Droplet>, String> {
+    pub async fn list_droplets_by_tag_name(
+        &self,
+        name: &str,
+    ) -> Result<DropletListResponse, String> {
         self.client
             .request(
                 reqwest::Method::GET,
@@ -76,9 +81,14 @@ impl DigitalOcean {
             .send()
             .await
             .unwrap()
-            .json::<Vec<Droplet>>()
+            .json::<DropletListResponse>()
             .await
-            .map_err(|e| format!("unable to make request to create droplet {:?}", e))
+            .map_err(|e| {
+                format!(
+                    "unable to make request to list_droplets_by_tag_name {:?}",
+                    e
+                )
+            })
     }
 }
 
@@ -99,6 +109,7 @@ impl DigitalOceanClientBuiler {
         }
     }
 
+    #[allow(dead_code)]
     pub fn token(mut self, token: String) -> DigitalOceanClientBuiler {
         self.token = token;
         self

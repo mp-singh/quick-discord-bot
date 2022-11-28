@@ -15,6 +15,23 @@ pub struct DropletCreate {
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct DropletCreateResponse {
+    pub droplet: Droplet,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct DropletListResponse {
+    pub droplets: Vec<Droplet>,
+    pub meta: Meta,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct Meta {
+    pub total: usize,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+#[serde(rename = "droplet")]
 pub struct Droplet {
     pub id: usize,
     pub name: String,
@@ -29,7 +46,6 @@ pub struct Droplet {
     pub features: Vec<String>,
     pub region: Region,
     pub image: Image,
-    pub size: String,
     pub size_slug: String,
     pub networks: Networks,
     pub tags: Vec<String>,

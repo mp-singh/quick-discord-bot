@@ -134,11 +134,12 @@ async fn provison_new(
     };
     let mut interaction = Interaction::new(ctx, command, true);
     match do_client.create_droplet(new).await {
-        Ok(droplet) => {
+        Ok(response) => {
+            let droplet = response.droplet;
             interaction
                 .reply(format!(
                     "Provison request created: {} - {}",
-                    droplet.name, droplet.networks.v4[0].ip_address
+                    droplet.name, droplet.status
                 ))
                 .await;
         }
@@ -159,7 +160,7 @@ async fn un_provision(
     let mut interaction = Interaction::new(ctx, command, true);
     let name = options
         .iter()
-        .find(|opt| opt.name == "name")
+        .find(|opt| opt.name == "tag")
         .unwrap()
         .value
         .as_ref()
@@ -187,13 +188,20 @@ async fn list_all(
 ) {
     let mut interaction = Interaction::new(ctx, command, true);
     match do_client.list_droplets_by_tag_name("kf2").await {
-        Ok(droplets) => {
-            let mut msg = "***Droplets***\n".to_string();
+        Ok(droplet_response) => {
+            let droplets = droplet_response.droplets;
+            let mut msg = format!("***Found [{}] Droplet(s)***\n", droplet_response.meta.total);
             for droplet in droplets {
-                msg.push_str(&format!("{}: {}\n", droplet.id, droplet.name));
+                msg.push_str(&format!(
+                    "id:{} - name:{} - ipAddress:{}\n",
+                    droplet.id, droplet.name, droplet.networks.v4[0].ip_address
+                ));
             }
             interaction.reply(&msg).await;
         }
-        Err(_) => interaction.reply("Unable to list KF2 Servers").await,
+        Err(e) => {
+            println!("Error: {}", e);
+            interaction.reply("Unable to list KF2 Servers").await
+        }
     };
 }

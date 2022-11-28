@@ -5,6 +5,24 @@ pub mod events;
 pub mod ping;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Commands {
+    KF2,
+    Ping,
+}
+
+impl FromStr for Commands {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "kf2" => Ok(Commands::KF2),
+            "ping" => Ok(Commands::Ping),
+            _ => Err(format!("{} is not a valid command", s)),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SubCommand {
     Provision,
     UnProvision,
@@ -55,5 +73,11 @@ mod tests {
             SubCommand::UnProvision
         );
         assert_eq!(SubCommand::from_str("list").unwrap(), SubCommand::List);
+    }
+
+    #[test]
+    fn test_command_from_str() {
+        assert_eq!(Commands::from_str("kf2").unwrap(), Commands::KF2);
+        assert_eq!(Commands::from_str("ping").unwrap(), Commands::Ping);
     }
 }

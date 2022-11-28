@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use serenity::{
     async_trait,
     model::prelude::{
@@ -11,7 +13,8 @@ use serenity::{
 use crate::{
     clients::digital_ocean::DigitalOceanClientBuiler,
     commands::{
-        self, slash,
+        self,
+        slash::{self, Commands},
         witty::{shirley, thanks},
     },
 };
@@ -21,14 +24,13 @@ pub struct Handler;
 #[async_trait]
 impl EventHandler for Handler {
     async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
-        let do_client = DigitalOceanClientBuiler::new()
-            .token("test".to_string())
-            .build();
+        let do_client = DigitalOceanClientBuiler::new().build();
         if let ApplicationCommand(command) = interaction {
-            match command.data.name.as_str() {
-                "ping" => commands::slash::ping::run(&ctx, &command).await,
-                "kf2" => commands::slash::events::kf2::run(&ctx, &command, &do_client).await,
-                _ => {}
+            match Commands::from_str(command.data.name.as_str()).unwrap() {
+                Commands::Ping => commands::slash::ping::run(&ctx, &command).await,
+                Commands::KF2 => {
+                    commands::slash::events::kf2::run(&ctx, &command, &do_client).await
+                }
             };
         }
     }

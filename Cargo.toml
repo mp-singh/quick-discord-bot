@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0"
 serenity = "0.11"
-tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.18", features = ["macros", "rt-multi-thread"] }
 rand = "0.8"
 reqwest = "0.11"
 lazy_static = "1.4.0"

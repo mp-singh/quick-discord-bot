@@ -9,7 +9,9 @@ use serenity::{
 use std::str::FromStr;
 
 use crate::{
-    clients::digital_ocean::{models::droplet::DropletCreate, DigitalOcean},
+    clients::digital_ocean::{
+        deployments::Deployment, models::droplet::DropletCreate, DigitalOcean,
+    },
     commands::slash::SubCommand,
     utils::interactions::{constants::KF2_ROLE_ID, Interaction},
 };
@@ -124,6 +126,7 @@ async fn provison_new(
         .unwrap();
 
     let new = DropletCreate {
+        user_data: Some(Deployment::HelloWorld.get_cloud_config()),
         name: "kf2.server".to_owned(),
         region: region.to_string(),
         size: size.to_string(),

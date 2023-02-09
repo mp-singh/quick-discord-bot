@@ -7,6 +7,7 @@ use crate::{clients::digital_ocean::models::droplet::DropletListResponse, lazy_s
 
 use self::models::droplet::{DropletCreate, DropletCreateResponse};
 
+pub mod deployments;
 pub mod models;
 
 #[derive(Debug)]

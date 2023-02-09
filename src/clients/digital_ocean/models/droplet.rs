@@ -10,6 +10,7 @@ pub struct DropletCreate {
     pub size: String,
     pub image: String,
     pub tags: Vec<String>,
+    pub user_data: Option<String>,
     pub ssh_key: Option<Vec<String>>,
     pub backup: Option<bool>,
 }

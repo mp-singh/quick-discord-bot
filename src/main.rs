@@ -19,7 +19,8 @@ async fn main() {
         .help(&MY_HELP) // set the bot's prefix to "~"
         .group(&GENERAL_GROUP);
 
-    let token = env::var("DISCORD_TOKEN").expect("token");
+    // let token = env::var("DISCORD_TOKEN").expect("token");
+    let token = "OTUzNzYyMDM4OTczMzYyMjM3.Gu40Qu.XhWlRnz-R5w94y0N-YyRafyNVzwwEmA7QXY1b8";
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES
         | GatewayIntents::MESSAGE_CONTENT;

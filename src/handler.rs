@@ -57,6 +57,12 @@ impl EventHandler for Handler {
             if let Some(shirley) = shirley(&msg.content) {
                 let _ = msg.channel_id.say(&ctx.http, shirley).await;
             }
+            if let Some(hardly) = commands::witty::hardly(&msg) {
+                let _ = msg.channel_id.say(&ctx.http, hardly).await;
+            }
+            if let Some(im_resp) = commands::witty::im_response(&msg) {
+                let _ = msg.channel_id.say(&ctx.http, im_resp).await;
+            }
         }
     }
 }

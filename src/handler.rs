@@ -31,6 +31,7 @@ impl EventHandler for Handler {
                 Commands::KF2 => {
                     commands::slash::events::kf2::run(&ctx, &command, &do_client).await
                 }
+                Commands::ChatGPT => commands::slash::chatgpt::run(&ctx, &command).await,
             };
         }
     }
@@ -40,6 +41,7 @@ impl EventHandler for Handler {
             commands
                 .create_application_command(|command| slash::ping::register(command))
                 .create_application_command(|command| slash::events::kf2::register(command))
+                .create_application_command(|command| slash::chatgpt::register(command))
         })
         .await
         {

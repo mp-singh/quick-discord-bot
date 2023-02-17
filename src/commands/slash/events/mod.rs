@@ -23,11 +23,3 @@ pub async fn requires_role(
     }
     found
 }
-
-mod test {
-
-    #[test]
-    fn test_requires_role() {
-        assert!(true);
-    }
-}

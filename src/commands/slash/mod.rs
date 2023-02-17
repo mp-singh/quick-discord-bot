@@ -1,9 +1,9 @@
 use core::fmt;
 use std::str::FromStr;
 
+pub mod chatgpt;
 pub mod events;
 pub mod ping;
-pub mod chatgpt;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Commands {

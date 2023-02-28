@@ -3,13 +3,20 @@ use std::str::FromStr;
 
 pub mod chatgpt;
 pub mod events;
-pub mod ping;
+pub mod general;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Commands {
     KF2,
     Ping,
     ChatGPT,
+    Ip,
+    Joke,
+    Yomama,
+    Excuse,
+    ChuckNorris,
+    Now,
+    Trump,
 }
 
 impl FromStr for Commands {
@@ -20,6 +27,13 @@ impl FromStr for Commands {
             "kf2" => Ok(Commands::KF2),
             "ping" => Ok(Commands::Ping),
             "chatgpt" => Ok(Commands::ChatGPT),
+            "ip" => Ok(Commands::Ip),
+            "joke" => Ok(Commands::Joke),
+            "yomama" => Ok(Commands::Yomama),
+            "excuse" => Ok(Commands::Excuse),
+            "chucknorris" => Ok(Commands::ChuckNorris),
+            "now" => Ok(Commands::Now),
+            "trump" => Ok(Commands::Trump),
             _ => Err(format!("{} is not a valid command", s)),
         }
     }

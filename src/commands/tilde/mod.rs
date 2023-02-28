@@ -19,14 +19,7 @@ use crate::models::*;
 
 #[group]
 #[commands(
-    ping,
-    ip,
-    joke,
-    yomama,
     trivia,
-    excuse,
-    chuck_norris,
-    trump,
     count,
     flip,
     roll,
@@ -35,7 +28,6 @@ use crate::models::*;
     cv,
     lucky,
     face,
-    now,
     movie,
     xkcd,
     nasa
@@ -52,57 +44,6 @@ pub async fn my_help(
     owners: HashSet<UserId>,
 ) -> CommandResult {
     let _ = help_commands::with_embeds(context, msg, args, help_options, groups, owners).await;
-    Ok(())
-}
-
-#[command]
-pub async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
-    msg.reply(ctx, "Pong").await?;
-    Ok(())
-}
-
-#[command]
-#[description("Get the IP address of the bot")]
-#[help_available(false)]
-pub async fn ip(ctx: &Context, msg: &Message) -> CommandResult {
-    let ip = REQUEST
-        .get("https://api.ipify.org")
-        .send()
-        .await?
-        .text()
-        .await?;
-
-    msg.reply(ctx, ip).await?;
-    Ok(())
-}
-
-#[command]
-#[example(": ~joke")]
-#[description("Get a random joke")]
-pub async fn joke(ctx: &Context, msg: &Message) -> CommandResult {
-    let joke = REQUEST
-        .get("https://icanhazdadjoke.com/")
-        .header("Accept", "text/plain")
-        .send()
-        .await?
-        .text()
-        .await?;
-    msg.reply(ctx, joke).await?;
-    Ok(())
-}
-
-#[command]
-#[example(": ~yomama")]
-#[description("Get a random yomama joke")]
-pub async fn yomama(ctx: &Context, msg: &Message) -> CommandResult {
-    let yomama = REQUEST
-        .get("https://api.yomomma.info/")
-        .header("Accept", "text/plain")
-        .send()
-        .await?
-        .json::<Joke>()
-        .await?;
-    msg.reply(ctx, yomama.joke).await?;
     Ok(())
 }
 
@@ -133,39 +74,6 @@ pub async fn trivia(ctx: &Context, msg: &Message) -> CommandResult {
         )),
     )
     .await?;
-    Ok(())
-}
-
-#[command]
-#[usage(": ~excuse")]
-#[description("Generate a random excuse why dev work isn't complete!")]
-pub async fn excuse(ctx: &Context, msg: &Message) -> CommandResult {
-    let excuse = REQUEST
-        .get("https://api.devexcus.es")
-        .send()
-        .await?
-        .json::<Excuse>()
-        .await
-        .unwrap();
-
-    msg.reply(ctx, excuse.text).await?;
-    Ok(())
-}
-
-#[command]
-#[usage(": ~chuck_norris")]
-#[example(": ~chuck, ~chuck_norris, ~chucknorris")]
-#[description("Get your daily Chuck Norris fact!")]
-#[aliases("chuck", "chucknorris")]
-pub async fn chuck_norris(ctx: &Context, msg: &Message) -> CommandResult {
-    let chuck_norris = REQUEST
-        .get("https://api.chucknorris.io/jokes/random")
-        .send()
-        .await?
-        .json::<ChuckNorris>()
-        .await?;
-
-    msg.reply(ctx, chuck_norris.value).await?;
     Ok(())
 }
 
@@ -306,21 +214,6 @@ pub async fn roll(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
 }
 
 #[command]
-#[usage(": ~trump")]
-#[description("Generate a random, completely factual, Donald Trump quote.")]
-pub async fn trump(ctx: &Context, msg: &Message) -> CommandResult {
-    let trump = REQUEST
-        .get("https://api.whatdoestrumpthink.com/api/v1/quotes/random")
-        .send()
-        .await?
-        .json::<Trump>()
-        .await?;
-
-    msg.reply(ctx, trump.message).await?;
-    Ok(())
-}
-
-#[command]
 #[usage(": ~pirate")]
 #[min_args(1)]
 #[description("Translate english into something piratey could say in a drunken pirate voice.")]
@@ -416,15 +309,6 @@ pub async fn lucky(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
         .unwrap();
 
     msg.reply(ctx, url.split("q=").collect::<Vec<&str>>()[1])
-        .await?;
-    Ok(())
-}
-
-#[command]
-#[usage(": ~now")]
-#[description("Returns the time")]
-pub async fn now(ctx: &Context, msg: &Message) -> CommandResult {
-    msg.reply(ctx, format!("<t:{}:F>", chrono::Utc::now().timestamp()))
         .await?;
     Ok(())
 }

@@ -29,7 +29,13 @@ pub fn im_response(msg: &Message) -> Option<String> {
     }
     IM_REGEX
         .captures(msg.content.to_lowercase().as_str())
-        .map(|cap| format!("Hi {}, I'm corny!", cap.get(1).unwrap().as_str()))
+        .map(|cap| 
+            if cap.get(1).unwrap().as_str() == "horny" || cap.get(1).unwrap().as_str() == "corny" {
+                "You should get that checked out.".to_string()
+            } else{
+                format!("Hi {}, I'm corny!", cap.get(1).unwrap().as_str())
+            }
+        )
 }
 
 fn check_guild(msg: &Message) -> Option<Option<String>> {

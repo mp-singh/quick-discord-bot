@@ -1,5 +1,5 @@
 use crate::{
-    models::{ChuckNorris, Excuse, Trump},
+    models::{ChuckNorris, Excuse, Joke, Trump},
     utils::interactions::Interaction,
 };
 use serenity::{

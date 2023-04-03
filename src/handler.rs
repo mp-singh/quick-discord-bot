@@ -34,6 +34,9 @@ impl EventHandler for Handler {
                 Commands::Yomama => commands::slash::general::run_yomama(&ctx, &command).await,
                 Commands::Excuse => commands::slash::general::run_excuse(&ctx, &command).await,
                 Commands::Trump => commands::slash::general::run_trump(&ctx, &command).await,
+                Commands::Flip => commands::slash::general::run_flip(&ctx, &command).await,
+                Commands::NASA => commands::slash::general::run_nasa(&ctx, &command).await,
+                Commands::Face => commands::slash::general::run_face(&ctx, &command).await,
                 Commands::ChuckNorris => {
                     commands::slash::general::run_chuck_norris(&ctx, &command).await
                 }
@@ -60,6 +63,9 @@ impl EventHandler for Handler {
                 .create_application_command(|command| slash::general::register_yomama(command))
                 .create_application_command(|command| slash::general::register_excuse(command))
                 .create_application_command(|command| slash::general::register_trump(command))
+                .create_application_command(|command| slash::general::register_flip(command))
+                .create_application_command(|command| slash::general::register_nasa(command))
+                .create_application_command(|command| slash::general::register_face(command))
         })
         .await
         {

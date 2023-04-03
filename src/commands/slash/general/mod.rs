@@ -1,14 +1,17 @@
 use crate::{
-    models::{ChuckNorris, Excuse, Trump},
-    utils::interactions::Interaction,
+    models::{ChuckNorris, Excuse, Trump, NASAPicOfTheDay, Joke},
+    utils::interactions::Interaction, lazy_statics::NASA_API_KEY,
 };
+use rand::Rng;
 use serenity::{
     builder::CreateApplicationCommand,
-    model::prelude::interaction::application_command::ApplicationCommandInteraction,
+    model::prelude::{interaction::application_command::ApplicationCommandInteraction},
     prelude::Context,
 };
 
+
 use crate::lazy_statics::REQUEST;
+
 
 pub fn register_ping(command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {
     command.name("ping").description("A ping command")
@@ -180,4 +183,89 @@ pub async fn run_trump(ctx: &Context, command: &ApplicationCommandInteraction) {
         return;
     };
     interaction.reply(&trump.message).await;
+}
+
+pub fn register_nasa(command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {
+    command
+        .name("nasa")
+        .description("Displays a random image from NASA's Astronomy Picture of the Day")
+}
+
+pub async fn run_nasa(ctx: &Context, command: &ApplicationCommandInteraction) {
+    let mut interaction = Interaction::new(ctx, command, false);
+
+    let Ok(response) = REQUEST
+        .get(format!(
+            "https://api.nasa.gov/planetary/apod?api_key={}",
+            NASA_API_KEY.as_str()
+        ))
+        .send()
+    .await else {
+        interaction.reply("Unable to grab nasa pic of the day").await;
+        return;
+    };
+
+    let Ok(pic) = response
+    .json::<NASAPicOfTheDay>()
+    .await else {
+        interaction.reply("Unable to grab nasa pic of the day").await;
+        return;
+    };
+    
+    let Ok(_) = command.channel_id
+    .send_message(ctx, |message| {
+        message.embed(|embed| {
+            embed.title(pic.title);
+            embed.image(pic.url.as_str());
+            embed.footer(|f| f.text(format!("© {}", &pic.copyright)));
+            embed
+        });
+        message
+    })
+    .await else {
+        interaction.reply("Unable to grab nasa pic of the day").await;
+        return;
+    };
+    
+}
+
+pub fn register_flip(command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {
+    command
+        .name("flip")
+        .description("flip a coin and get heads or tails")
+}
+
+pub async fn run_flip(ctx: &Context, command: &ApplicationCommandInteraction) {
+    let mut interaction = Interaction::new(ctx, command, false);
+
+    let response = match rand::thread_rng().gen_range(0..2) {
+        0 => "Heads",
+        1 => "Tails",
+        _ => "Shit's broken yo!",
+    };
+
+    interaction.reply(response).await;
+    
+}
+
+pub fn register_face(command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {
+    command
+        .name("face")
+        .description("Generates a face that doesn't exist")
+}
+
+pub async fn run_face(ctx: &Context, command: &ApplicationCommandInteraction) {
+    let mut interaction = Interaction::new(ctx, command, false);
+    
+    let Ok(_) = command.channel_id
+    .send_message(&ctx.http, |m| {
+        m.embed(|e| {
+            e.title("This face doesn't exist")
+                .image("https://thispersondoesnotexist.com/image")
+        })
+    })
+    .await else {
+        interaction.reply("Unable to grab nasa pic of the day").await;
+        return;
+    };
 }

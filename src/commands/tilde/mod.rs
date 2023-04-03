@@ -13,7 +13,7 @@ use serenity::model::{application::component::ButtonStyle, channel::Message};
 use serenity::utils::{Content, ContentModifier::Spoiler};
 
 use crate::commands::movie;
-use crate::lazy_statics::{NASA_API_KEY, REGEX_DICE, REQUEST, TRANSFORMATION_TYPES};
+use crate::lazy_statics::{REGEX_DICE, REQUEST, TRANSFORMATION_TYPES};
 
 use crate::models::*;
 
@@ -21,16 +21,13 @@ use crate::models::*;
 #[commands(
     trivia,
     count,
-    flip,
     roll,
     haphazardly,
     pirate,
     cv,
     lucky,
-    face,
     movie,
     xkcd,
-    nasa
 )]
 pub struct General;
 
@@ -115,20 +112,6 @@ pub async fn count(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
             "{} messages found containing phrase: \"{}\".",
             count, phrase
         ),
-    };
-    msg.reply(ctx, response).await?;
-    Ok(())
-}
-
-#[command]
-#[usage(": ~flip")]
-#[description("Flip a coin")]
-pub async fn flip(ctx: &Context, msg: &Message) -> CommandResult {
-    // flip a coin
-    let response = match rand::thread_rng().gen_range(0..2) {
-        0 => "Heads",
-        1 => "Tails",
-        _ => "Shit's broken yo!",
     };
     msg.reply(ctx, response).await?;
     Ok(())
@@ -386,35 +369,6 @@ async fn xkcd(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
                     })
                 });
                 c
-            });
-            message
-        })
-        .await?;
-
-    Ok(())
-}
-
-#[command]
-#[usage(": ~nasa")]
-#[description("Displays a random image from NASA's Astronomy Picture of the Day")]
-async fn nasa(ctx: &Context, msg: &Message) -> CommandResult {
-    let pic = REQUEST
-        .get(format!(
-            "https://api.nasa.gov/planetary/apod?api_key={}",
-            NASA_API_KEY.as_str()
-        ))
-        .send()
-        .await?
-        .json::<NASAPicOfTheDay>()
-        .await?;
-
-    msg.channel_id
-        .send_message(ctx, |message| {
-            message.embed(|embed| {
-                embed.title(pic.title);
-                embed.image(pic.url.as_str());
-                embed.footer(|f| f.text(format!("© {}", &pic.copyright)));
-                embed
             });
             message
         })

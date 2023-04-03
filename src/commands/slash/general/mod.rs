@@ -87,7 +87,6 @@ pub async fn run_yomama(ctx: &Context, command: &ApplicationCommandInteraction) 
 
     let Ok(response) = REQUEST
         .get("https://api.yomomma.info/")
-        .header("Accept", "text/plain")
         .send()
     .await else {
         interaction.reply("Unable to get yo mama joke").await;
@@ -95,12 +94,12 @@ pub async fn run_yomama(ctx: &Context, command: &ApplicationCommandInteraction) 
     };
 
     let Ok(joke) = response
-    .text()
+    .json::<Joke>()
     .await else {
         interaction.reply("Unable to get yo mama joke").await;
         return;
     };
-    interaction.reply(&joke).await;
+    interaction.reply(&joke.joke).await;
 }
 
 pub fn register_excuse(command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {

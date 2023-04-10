@@ -17,6 +17,7 @@ pub enum Commands {
     ChuckNorris,
     Now,
     Trump,
+    Nasa,
 }
 
 impl FromStr for Commands {
@@ -34,6 +35,7 @@ impl FromStr for Commands {
             "chucknorris" => Ok(Commands::ChuckNorris),
             "now" => Ok(Commands::Now),
             "trump" => Ok(Commands::Trump),
+            "nasa" => Ok(Commands::Nasa),
             _ => Err(format!("{} is not a valid command", s)),
         }
     }

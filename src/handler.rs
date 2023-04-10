@@ -40,6 +40,7 @@ impl EventHandler for Handler {
                 Commands::KF2 => {
                     commands::slash::events::kf2::run(&ctx, &command, &do_client).await
                 }
+                Commands::Nasa => commands::slash::general::run_nasa(&ctx, &command).await,
                 Commands::ChatGPT => commands::slash::chatgpt::run(&ctx, &command).await,
             };
         }
@@ -60,6 +61,7 @@ impl EventHandler for Handler {
                 .create_application_command(|command| slash::general::register_yomama(command))
                 .create_application_command(|command| slash::general::register_excuse(command))
                 .create_application_command(|command| slash::general::register_trump(command))
+                .create_application_command(|command| slash::general::register_nasa(command))
         })
         .await
         {

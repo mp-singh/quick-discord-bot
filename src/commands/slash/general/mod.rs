@@ -1,9 +1,10 @@
 use crate::{
-    models::{ChuckNorris, Excuse, Joke, Trump},
+    lazy_statics::NASA_API_KEY,
+    models::{ChuckNorris, Excuse, Joke, NASAPicOfTheDay, Trump},
     utils::interactions::Interaction,
 };
 use serenity::{
-    builder::CreateApplicationCommand,
+    builder::{CreateApplicationCommand, CreateMessage},
     model::prelude::interaction::application_command::ApplicationCommandInteraction,
     prelude::Context,
 };
@@ -180,4 +181,58 @@ pub async fn run_trump(ctx: &Context, command: &ApplicationCommandInteraction) {
         return;
     };
     interaction.reply(&trump.message).await;
+}
+
+pub fn register_nasa(command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {
+    command
+        .name("nasa")
+        .description("Displays a random image from NASA's Astronomy Picture of the Day")
+}
+
+pub async fn run_nasa(ctx: &Context, command: &ApplicationCommandInteraction) {
+    println!("Getting nasa pic of the day");
+    let mut interaction = Interaction::new(ctx, command, false);
+
+    let Ok(response) = REQUEST
+        .get(format!(
+            "https://api.nasa.gov/planetary/apod?api_key={}",
+            NASA_API_KEY.as_str()
+        ))
+        .send()
+    .await else {
+        interaction.reply("Unable to get nasa pic of the day, bad request").await;
+        return;
+    };
+    println!("Got nasa pic of the day");
+
+    let pic = match response.json::<NASAPicOfTheDay>().await {
+        Ok(pic) => pic,
+        Err(e) => {
+            println!("{:?}", e);
+            interaction
+                .reply("Unable to get nasa pic of the day, bad response")
+                .await;
+            return;
+        }
+    };
+    
+    println!("{:?}", pic);
+    let Ok(_) = command.channel_id.send_message(&ctx.http, |message| {
+        message.embed(|embed| {
+            embed.title(pic.title);
+            embed.image(pic.url.as_str());
+            embed.footer(|f| {
+                if pic.copyright.is_none() {
+                    return f.text("© NASA");
+                } else {
+                    f.text(format!("© {:?}", &pic.copyright.unwrap()))
+                }
+            });
+            embed
+        });
+        message
+    }).await else {
+        interaction.reply("Unable to get nasa pic of the day").await;
+        return;
+    };
 }

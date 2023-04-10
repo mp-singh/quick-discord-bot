@@ -57,7 +57,7 @@ pub struct XkcdComic {
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct NASAPicOfTheDay {
-    pub copyright: String,
+    pub copyright: Option<String>,
     pub date: String,
     pub explanation: String,
     pub title: String,

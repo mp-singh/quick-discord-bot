@@ -1,4 +1,5 @@
 use crate::{
+    commands::movie,
     models::{ChuckNorris, Excuse, Joke, Trump},
     utils::interactions::Interaction,
 };
@@ -180,4 +181,19 @@ pub async fn run_trump(ctx: &Context, command: &ApplicationCommandInteraction) {
         return;
     };
     interaction.reply(&trump.message).await;
+}
+
+pub fn register_movie(command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {
+    command
+        .name("movie")
+        .description("Generate a random movie synopsis")
+}
+
+pub async fn run_movie(ctx: &Context, command: &ApplicationCommandInteraction) {
+    let mut interaction = Interaction::new(ctx, command, false);
+    interaction.reply("Generating movie...").await;
+    let movie = movie::generate_movie();
+    interaction
+        .reply(format!("__**{}**__\n\n{}", movie.title, movie.synopsis))
+        .await;
 }
